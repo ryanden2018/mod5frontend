@@ -6,7 +6,7 @@ export default class Furnishing {
     this.id = furnishing.id;
     this.type = furnishing.type;
     this.posx = furnishing.posx;
-    this.posy = furnishing.posy;
+    this.posz = furnishing.posz;
     this.theta = furnishing.theta;
     this.params = furnishing.params;
     this.roomId = furnishing.roomId;
@@ -15,18 +15,18 @@ export default class Furnishing {
   }
 
   objVal() {
-    let retVal = {id:this.id, type:this.type, posx:this.posx, posy:this.posy, 
+    let retVal = {id:this.id, type:this.type, posx:this.posx, posz:this.posz, 
       theta:this.theta, params:this.params, roomId: this.roomId, colorName: this.colorName };
     return retVal;
   }
 
-  renderFurnishing(renderer,scene,camera) {
+  renderFurnishing(renderer,camera,light) {
     var rotateMat = new THREE.Matrix4();
     rotateMat.makeRotationY(this.theta);
     var translateMat = new THREE.Matrix4();
-    translateMat.makeTranslation(this.posx,this.posy,0);
+    translateMat.makeTranslation(this.posx,0,this.posz);
+    const scene = new THREE.Scene();
     renderer.renderLists.dispose();
-    scene.dispose();
     
     this.threeDimMeshes.forEach( mesh => {
       var cloneMesh = mesh.clone();
@@ -35,6 +35,7 @@ export default class Furnishing {
       scene.add(cloneMesh);
     });
 
+    scene.add(light);
     renderer.render(scene,camera);
   }
 }
