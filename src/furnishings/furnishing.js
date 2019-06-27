@@ -20,13 +20,18 @@ export default class Furnishing {
     return retVal;
   }
 
-  renderFurnishing(renderer,camera,light) {
+  static doInit(renderer,light) {
+    renderer.renderLists.dispose();
+    var scene = new THREE.Scene();
+    scene.add(light);
+    return scene;
+  }
+
+  renderFurnishing(renderer,camera,light,scene) {
     var rotateMat = new THREE.Matrix4();
     rotateMat.makeRotationY(this.theta);
     var translateMat = new THREE.Matrix4();
     translateMat.makeTranslation(this.posx,0,this.posz);
-    const scene = new THREE.Scene();
-    renderer.renderLists.dispose();
     
     this.threeDimMeshes.forEach( mesh => {
       var cloneMesh = mesh.clone();
@@ -35,7 +40,7 @@ export default class Furnishing {
       scene.add(cloneMesh);
     });
 
-    scene.add(light);
     renderer.render(scene,camera);
+    return scene;
   }
 }
