@@ -2,11 +2,11 @@ import Furnishing from "./furnishing"
 import * as THREE from 'three';
 
 export default class Bed extends Furnishing {
-  constructor(furnishing) {
-    super(furnishing);
+  constructor(furnishing,colors) {
+    super(furnishing,colors);
 
-    const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
-    
+    const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
+  
     let scale = 0.9;
 
     const cube = new THREE.Mesh( new THREE.BoxGeometry(2*scale,0.75*scale,2.5*scale),material);

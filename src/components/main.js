@@ -1,6 +1,6 @@
 import React from 'react';
 import '../App.css';
-import Toolbar from './toolbar';
+import FurnishingsToolbar from './furnishingstoolbar';
 import MainCanvas from './maincanvas';
 import { connect } from 'react-redux';
 const io = require("socket.io-client");
@@ -9,7 +9,7 @@ const wsloc = "ws://localhost:8000";
 
 class Main extends React.Component {
 
-  state = {username:"",socket:null};
+  state = { username:"", socket:null, colors:{} };
 
   componentDidMount() {
     fetch(`/api/loggedin`)
@@ -21,13 +21,24 @@ class Main extends React.Component {
         this.setState({socket: io(wsloc,{transports:['websocket']}) },
           () => {
             this.state.socket.on("create",payload=>{
-              this.props.addFurnishingFromObject(payload.furnishing)
+              this.props.addFurnishingFromObject(payload.furnishing,this.state.colors)
             });
           });
       } else {
         this.props.history.push("/");
       }
     });
+
+    fetch('/api/colors')
+    .then( res => res.json() )
+    .then( data => {
+      data.forEach( color => {
+        let newColors = {...this.state.colors};
+        newColors[color.name] = {red: color.red, green: color.green, blue: color.blue};
+        this.setState({colors: newColors});
+      });
+    }).catch( () => { } )
+
   }
 
   handleLogout = () => {
@@ -40,8 +51,8 @@ class Main extends React.Component {
     <div>
       <p>Hello, {this.state.username}!</p>
       <form onSubmit={this.handleLogout}><input type="submit" value="Logout" /></form>
-      <Toolbar socket={this.state.socket} />
-      <MainCanvas username={this.state.username} socket={this.state.socket} />
+      <FurnishingsToolbar socket={this.state.socket} colors={this.state.colors} username={this.state.username} />
+      <MainCanvas username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
     </div> );
   }
 }
@@ -55,7 +66,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addFurnishingFromObject: (obj) => dispatch( {type:"addFurnishingFromObject",obj:obj} )
+    addFurnishingFromObject: (obj,colors) => dispatch( {type:"addFurnishingFromObject",obj:obj,colors:colors} )
   };
 };
 

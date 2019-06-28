@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 
 export default class Furnishing {
-  constructor(furnishing) {
+  constructor(furnishing,colors) {
     this.id = furnishing.id;
     this.type = furnishing.type;
     this.posx = furnishing.posx;
@@ -11,6 +11,11 @@ export default class Furnishing {
     this.params = furnishing.params;
     this.roomId = furnishing.roomId;
     this.colorName = furnishing.colorName;
+    if(colors && colors[this.colorName]) {
+      this.red = colors[this.colorName].red;
+      this.green = colors[this.colorName].green;
+      this.blue = colors[this.colorName].blue;
+    }
     this.threeDimMeshes = []; // fill out in subclasses
   }
 

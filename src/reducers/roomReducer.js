@@ -17,93 +17,95 @@ export default function roomReducer(state = [], action) {
     case 'addFurnishing':
       switch(action.name) {
         case 'bed':
-          let bed = new Bed({id:uuid(),type:"bed",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let bed = new Bed({id:uuid(),type:"bed",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:bed.objVal()});
           }
           return [...state,bed];
         case 'chair':
-          let chair = new Chair({id:uuid(),type:"chair",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let chair = new Chair({id:uuid(),type:"chair",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:chair.objVal()});
           }
           return [...state,chair];
         case 'desk':
-          let desk = new Desk({id:uuid(),type:"desk",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"})
+          let desk = new Desk({id:uuid(),type:"desk",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors)
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:desk.objVal()});
           }
           return [...state,desk];
         case 'table':
-          let table = new Table({id:uuid(),type:"table",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let table = new Table({id:uuid(),type:"table",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:table.objVal()});
           }
           return [...state,table];
         case 'bookcase':
-          let bookcase = new BookCase({id:uuid(),type:"bookcase",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let bookcase = new BookCase({id:uuid(),type:"bookcase",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:bookcase.objVal()});
           }
           return [...state,bookcase];
         case 'dresser':
-          let dresser = new Dresser({id:uuid(),type:"dresser",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let dresser = new Dresser({id:uuid(),type:"dresser",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:dresser.objVal()});
           }
           return [...state,dresser];
         case 'longtable':
-          let longtable = new LongTable({id:uuid(),type:"longtable",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let longtable = new LongTable({id:uuid(),type:"longtable",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:longtable.objVal()});
           } 
-          return [...state,new LongTable({id:uuid(),type:"longtable",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"})];
+          return [...state,longtable];
         case 'nightstand':
-          let nightstand = new NightStand({id:uuid(),type:"nightstand",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let nightstand = new NightStand({id:uuid(),type:"nightstand",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:nightstand.objVal()});
           } 
           return [...state,nightstand];
         case 'sofa':
-          let sofa = new Sofa({id:uuid(),type:"sofa",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let sofa = new Sofa({id:uuid(),type:"sofa",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:sofa.objVal()});
           }
           return [...state,sofa];
         case 'stool':
-          let stool = new Stool({id:uuid(),type:"stool",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"});
+          let stool = new Stool({id:uuid(),type:"stool",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:stool.objVal()});
           }
           return [...state,stool];
         default:
-          // do nothing
+          break;
       }
+      break;
     case 'addFurnishingFromObject':
       switch(action.obj.type) {
         case 'bed':
-          return [...state, new Bed(action.obj)]
+          return [...state, new Bed(action.obj,action.colors)]
         case 'chair':
-          return [...state, new Chair(action.obj)]
+          return [...state, new Chair(action.obj,action.colors)]
         case 'desk':
-          return [...state, new Desk(action.obj)]
+          return [...state, new Desk(action.obj,action.colors)]
         case 'table':
-          return [...state, new Table(action.obj)]
+          return [...state, new Table(action.obj,action.colors)]
         case 'bookcase':
-          return [...state, new BookCase(action.obj)]
+          return [...state, new BookCase(action.obj,action.colors)]
         case 'dresser':
-          return [...state, new Dresser(action.obj)]
+          return [...state, new Dresser(action.obj,action.colors)]
         case 'longtable':
-          return [...state, new LongTable(action.obj)]
+          return [...state, new LongTable(action.obj,action.colors)]
         case 'nightstand':
-          return [...state, new NightStand(action.obj)]
+          return [...state, new NightStand(action.obj,action.colors)]
         case 'sofa':
-          return [...state, new Sofa(action.obj)]
+          return [...state, new Sofa(action.obj,action.colors)]
         case 'stool':
-          return [...state, new Stool(action.obj)]
+          return [...state, new Stool(action.obj,action.colors)]
         default:
-          // do nothing
+          break;
       }
+      break;
     default:
       return state;
   }
