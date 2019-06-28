@@ -7,25 +7,27 @@ export default class Bed extends Furnishing {
 
     const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
     
-    const cube = new THREE.Mesh( new THREE.BoxGeometry(2,0.75,2.5),material);
-    cube.position.set(0.0,-0.1+1,0.0)
+    let scale = 0.9;
 
-    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.8,25 ),
+    const cube = new THREE.Mesh( new THREE.BoxGeometry(2*scale,0.75*scale,2.5*scale),material);
+    cube.position.set(0.0,-0.1*scale+0.8*scale,0.0)
+
+    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material ) 
-    cylinder1.position.set(-0.9,-0.5+1,1.1)
+    cylinder1.position.set(-0.9*scale,-0.5*scale+1*scale,1.1*scale)
     
-    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.8,25 ),
+    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material ) 
-    cylinder2.position.set(0.9,-0.5+1,1.1)
+    cylinder2.position.set(0.9*scale,-0.5*scale+1*scale,1.1*scale)
     
-    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.8,25 ),
+    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material ) 
-    cylinder3.position.set(-0.9,-0.5+1,-1.1)
+    cylinder3.position.set(-0.9*scale,-0.5*scale+1*scale,-1.1*scale)
 
     
-    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.8,25 ),
+    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material )
-    cylinder4.position.set(0.9,-0.5+1,-1.1)
+    cylinder4.position.set(0.9*scale,-0.5*scale+1*scale,-1.1*scale)
 
     
     this.threeDimMeshes.push(cube);

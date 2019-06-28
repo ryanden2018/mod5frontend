@@ -35,6 +35,8 @@ export default class Furnishing {
     
     this.threeDimMeshes.forEach( mesh => {
       var cloneMesh = mesh.clone();
+      cloneMesh.castShadow = true;
+      cloneMesh.receiveShadow = true;
       cloneMesh.applyMatrix(rotateMat);
       cloneMesh.applyMatrix(translateMat);
       scene.add(cloneMesh);
