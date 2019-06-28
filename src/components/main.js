@@ -2,10 +2,14 @@ import React from 'react';
 import '../App.css';
 import Toolbar from './toolbar';
 import MainCanvas from './maincanvas';
+import { connect } from 'react-redux';
+const io = require("socket.io-client");
 
-export default class Main extends React.Component {
+const wsloc = "ws://localhost:8000";
 
-  state = {username:""};
+class Main extends React.Component {
+
+  state = {username:"",socket:null};
 
   componentDidMount() {
     fetch(`/api/loggedin`)
@@ -14,6 +18,12 @@ export default class Main extends React.Component {
       if(data.status && (data.status.includes('Logged in as '))) {
         var username = data.status.split(" ")[3];
         this.setState({username:username});
+        this.setState({socket: io(wsloc,{transports:['websocket']}) },
+          () => {
+            this.state.socket.on("create",payload=>{
+              this.props.addFurnishingFromObject(payload.furnishing)
+            });
+          });
       } else {
         this.props.history.push("/");
       }
@@ -30,8 +40,23 @@ export default class Main extends React.Component {
     <div>
       <p>Hello, {this.state.username}!</p>
       <form onSubmit={this.handleLogout}><input type="submit" value="Logout" /></form>
-      <Toolbar />
-      <MainCanvas username={this.state.username} />
+      <Toolbar socket={this.state.socket} />
+      <MainCanvas username={this.state.username} socket={this.state.socket} />
     </div> );
   }
 }
+
+
+
+const mapStateToProps = state => {
+  return {
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addFurnishingFromObject: (obj) => dispatch( {type:"addFurnishingFromObject",obj:obj} )
+  };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(Main);

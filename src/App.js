@@ -4,9 +4,6 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import Signup from './components/signup';
 import Main from './components/main';
 import Login from './components/login';
-//const io = require("socket.io-client")
-//var socket;
-//socket = io("ws://localhost:8000",{transports:['websocket']});
 
 export default class App extends React.Component {
   render() {
