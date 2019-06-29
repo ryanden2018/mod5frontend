@@ -64,9 +64,19 @@ class MainCanvas extends React.Component {
       }
     });
     if(furnishing) {
-      this.props.socket.emit("lockRequest",{furnishingId:furnishing.id});
-      this.props.setLockRequested();
-      this.props.setFurnishing(furnishing.id);
+      if( (this.props.mode.mode === "move") || (this.props.mode.mode === "rotate") ) {
+        this.props.socket.emit("lockRequest",{furnishingId:furnishing.id});
+        this.props.setLockRequested();
+        this.props.setFurnishing(furnishing.id);
+      } else if (this.props.mode.mode === "color") {
+        this.props.updateColor(furnishing.id,this.props.mode.colorName,this.props.colors);
+        this.props.socket.emit("updateColor",{furnishingId:furnishing.id,colorName:this.props.mode.colorName});
+        this.props.setMode("move");
+      } else if (this.props.mode.mode === "delete") {
+        this.props.socket.emit("deleteFurnishing",{furnishingId:furnishing.id});
+        this.props.deleteFurnishing(furnishing.id);
+        this.props.setMode("move");
+      }
     }
   }
 
@@ -142,7 +152,10 @@ const mapDispatchToProps = dispatch => {
     moveTheta : (dtheta,furnishingId,colors) => dispatch({type:"MOVE_THETA",dtheta:dtheta,furnishingId:furnishingId,colors:colors}),
     setMouseDown : (mousex,mousey) => dispatch({type:"SET_MOUSE_DOWN",mousex:mousex,mousey:mousey}),
     unSetMouseDown : () => dispatch({type:"UN_SET_MOUSE_DOWN"}),
-    dim: (furnishingId,colors) => dispatch({type:"DIM",furnishingId:furnishingId,colors:colors})
+    dim: (furnishingId,colors) => dispatch({type:"DIM",furnishingId:furnishingId,colors:colors}),
+    deleteFurnishing : (furnishingId) => dispatch({type:"DELETE_FURNISHING",furnishingId:furnishingId}),
+    setMode : mode => dispatch({type:"SET_MODE",mode:mode}),
+    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors})
   };
 };
 

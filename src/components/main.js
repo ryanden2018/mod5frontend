@@ -33,6 +33,12 @@ class Main extends React.Component {
                 this.props.unLock();
               }
             });
+            this.state.socket.on("delete", payload=>{
+              this.props.deleteFurnishing(payload.furnishingId);
+            });
+            this.state.socket.on("colorUpdate",payload=>{
+              this.props.updateColor(payload.furnishingId,payload.colorName,this.state.colors);
+            });
           });
         fetch(`/api/users/${username}/rooms`)
         .then( res => res.json() )
@@ -91,7 +97,9 @@ const mapDispatchToProps = dispatch => {
     setAvailableRooms: rooms => dispatch( {type:"SET_AVAILABLE_ROOMS",rooms:rooms}),
     unLock : () => dispatch({type:"UN_LOCK"}),
     setLockApproved: () => dispatch({type:"SET_LOCK_APPROVED"}),
-    brighten : (furnishingId, colors) => dispatch( { type:"BRIGHTEN", furnishingId:furnishingId, colors:colors } )
+    brighten : (furnishingId, colors) => dispatch( { type:"BRIGHTEN", furnishingId:furnishingId, colors:colors } ),
+    deleteFurnishing : (furnishingId) => dispatch({type:"DELETE_FURNISHING",furnishingId:furnishingId}),
+    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors})
   };
 };
 
