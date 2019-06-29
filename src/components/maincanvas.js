@@ -10,20 +10,14 @@ const height = 800;
 class MainCanvas extends React.Component {
 
   handleMouseMove = event => {
-    if(this.props.lock.mouseDown) {
-      this.props.setDragging();
-    }
-    if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.dragging) {
+    if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       this.props.moveX(4*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
-      this.props.moveZ(4*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
+      this.props.moveZ(8*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
     }
   }
 
   handleMouseDown = event => {
     this.props.setMouseDown()
-  }
-
-  handleMouseUp = event => {
     let mouse = new THREE.Vector2();
     var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     mouse.x = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
@@ -40,24 +34,21 @@ class MainCanvas extends React.Component {
         }
       }
     });
-    if(this.props.lock.lockObtained && !this.props.lock.dragging) {
-      if((!furnishing) || (furnishing.id !== this.props.lock.furnishingId)) {
-        this.props.socket.emit("lockRelease",{furnishing:
-          this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
-        this.props.dim(this.props.lock.furnishingId,this.props.colors);
-        this.props.unLock();
-      }
-    } else {
-      if(furnishing) {
-        this.props.socket.emit("lockRequest",{furnishingId:furnishing.id});
-        this.props.setLockRequested();
-        this.props.setFurnishing(furnishing.id);
-      }
+    if(furnishing) {
+      this.props.socket.emit("lockRequest",{furnishingId:furnishing.id});
+      this.props.setLockRequested();
+      this.props.setFurnishing(furnishing.id);
     }
-    if(this.props.lock.dragging) {
-      this.props.unSetDragging()
-    }
-    this.props.unSetMouseDown();
+  }
+
+  handleMouseUp = event => {
+  if(this.props.lock.lockObtained && this.props.lock.furnishingId) {
+      this.props.socket.emit("lockRelease",{furnishing:
+        this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
+      this.props.dim(this.props.lock.furnishingId,this.props.colors);
+      this.props.unLock();
+  }
+  this.props.unSetMouseDown();
   }
 
   componentDidMount() {
