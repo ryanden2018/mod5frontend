@@ -24,8 +24,8 @@ class MainCanvas extends React.Component {
   handleMouseMove = event => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
-        this.props.moveX(4*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
-        this.props.moveZ(8*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
+        this.props.moveX(3*4*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
+        this.props.moveZ(3*8*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
         let xval = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
@@ -96,10 +96,10 @@ class MainCanvas extends React.Component {
     this.raycaster = new THREE.Raycaster();
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.camera = new THREE.PerspectiveCamera(75,1,0.1,10);
-    this.camera.position.x = -1.0;
-    this.camera.position.y =  1.5;
-    this.camera.position.z = 2.5;
+    this.camera = new THREE.PerspectiveCamera(75,1,0.1,100);
+    this.camera.position.x = 0.0;
+    this.camera.position.y =  5.0;
+    this.camera.position.z = 10.0;
     this.light = new THREE.DirectionalLight(0xFFFFFF,1,100);
     this.light.castShadow = true;
     this.light.shadow.bias = -0.0002;

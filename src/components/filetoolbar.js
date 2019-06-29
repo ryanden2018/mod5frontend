@@ -79,6 +79,15 @@ class FileToolbar extends React.Component {
     }
   }
 
+  deleteRoom = () => {
+    fetch(`/api/rooms/${this.props.roomProperties.id}`,{method:'DELETE'})
+    .then( () => { 
+      this.props.resetFile();
+      this.props.removeAllFurnishings();
+    } )
+    .catch( () => { } )
+  }
+
   render() {
     return ( 
     <div>
@@ -100,6 +109,7 @@ class FileToolbar extends React.Component {
       { this.props.availableRooms ? <FormButton value="Open" handleSubmit={() => this.openRoom()} /> : null }
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Invite" handleSubmit={() => this.inviteToRoom()} /> : null }
       { this.props.roomProperties ? <b>Current Room: {this.props.roomProperties.name}</b> : null } 
+      { this.props.roomProperties && this.props.amOwner ? <FormButton value="Delete Room" handleSubmit={() => this.deleteRoom()} /> : null }
     </div> );
   }
 }
@@ -117,7 +127,8 @@ const mapDispatchToProps = dispatch => {
     addFurnishingFromObject: (obj,colors) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors} ),
     setIsOwner: (val) => dispatch({type:"SET_IS_OWNER",val:val}),
     setRoomProperties: (roomProperties) => dispatch({type:"SET_ROOM_PROPERTIES",roomProperties:roomProperties}),
-    removeAllFurnishings: () => dispatch({type:"REMOVE_ALL_FURNISHINGS"})
+    removeAllFurnishings: () => dispatch({type:"REMOVE_ALL_FURNISHINGS"}),
+    resetFile: () => dispatch({type:"RESET_FILE"})
   };
 };
 
