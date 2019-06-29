@@ -1,6 +1,7 @@
 import React from 'react';
 import '../App.css';
 import FurnishingsToolbar from './furnishingstoolbar';
+import FileToolbar from './filetoolbar';
 import MainCanvas from './maincanvas';
 import { connect } from 'react-redux';
 const io = require("socket.io-client");
@@ -24,6 +25,11 @@ class Main extends React.Component {
               this.props.addFurnishingFromObject(payload.furnishing,this.state.colors)
             });
           });
+        fetch(`/api/users/${username}/rooms`)
+        .then( res => res.json() )
+        .then( rooms => {
+          this.props.setAvailableRooms(rooms)
+        }).catch( () => { } )
       } else {
         this.props.history.push("/");
       }
@@ -39,6 +45,7 @@ class Main extends React.Component {
       });
     }).catch( () => { } )
 
+
   }
 
   handleLogout = () => {
@@ -51,8 +58,9 @@ class Main extends React.Component {
     <div>
       <p>Hello, {this.state.username}!</p>
       <form onSubmit={this.handleLogout}><input type="submit" value="Logout" /></form>
-      <FurnishingsToolbar socket={this.state.socket} colors={this.state.colors} username={this.state.username} />
-      <MainCanvas username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
+      <FileToolbar username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
+      {!!this.props.roomProperties ? <FurnishingsToolbar socket={this.state.socket} colors={this.state.colors} username={this.state.username} /> : null }
+      {!!this.props.roomProperties ? <MainCanvas username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
     </div> );
   }
 }
@@ -61,12 +69,14 @@ class Main extends React.Component {
 
 const mapStateToProps = state => {
   return {
+    roomProperties: state.file.roomProperties
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    addFurnishingFromObject: (obj,colors) => dispatch( {type:"addFurnishingFromObject",obj:obj,colors:colors} )
+    addFurnishingFromObject: (obj,colors) => dispatch( {type:"addFurnishingFromObject",obj:obj,colors:colors} ),
+    setAvailableRooms: rooms => dispatch( {type:"setAvailableRooms",rooms:rooms})
   };
 };
 

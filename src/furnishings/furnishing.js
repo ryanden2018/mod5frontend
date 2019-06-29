@@ -25,10 +25,11 @@ export default class Furnishing {
     return retVal;
   }
 
-  static doInit(renderer,light) {
+  static doInit(renderer,light,camera) {
     renderer.renderLists.dispose();
     var scene = new THREE.Scene();
     scene.add(light);
+    renderer.render(scene,camera);
     return scene;
   }
 

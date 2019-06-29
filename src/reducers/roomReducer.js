@@ -17,61 +17,61 @@ export default function roomReducer(state = [], action) {
     case 'addFurnishing':
       switch(action.name) {
         case 'bed':
-          let bed = new Bed({id:uuid(),type:"bed",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let bed = new Bed({id:uuid(),type:"bed",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:bed.objVal()});
           }
           return [...state,bed];
         case 'chair':
-          let chair = new Chair({id:uuid(),type:"chair",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let chair = new Chair({id:uuid(),type:"chair",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:chair.objVal()});
           }
           return [...state,chair];
         case 'desk':
-          let desk = new Desk({id:uuid(),type:"desk",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors)
+          let desk = new Desk({id:uuid(),type:"desk",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors)
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:desk.objVal()});
           }
           return [...state,desk];
         case 'table':
-          let table = new Table({id:uuid(),type:"table",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let table = new Table({id:uuid(),type:"table",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:table.objVal()});
           }
           return [...state,table];
         case 'bookcase':
-          let bookcase = new BookCase({id:uuid(),type:"bookcase",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let bookcase = new BookCase({id:uuid(),type:"bookcase",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:bookcase.objVal()});
           }
           return [...state,bookcase];
         case 'dresser':
-          let dresser = new Dresser({id:uuid(),type:"dresser",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let dresser = new Dresser({id:uuid(),type:"dresser",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:dresser.objVal()});
           }
           return [...state,dresser];
         case 'longtable':
-          let longtable = new LongTable({id:uuid(),type:"longtable",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let longtable = new LongTable({id:uuid(),type:"longtable",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:longtable.objVal()});
           } 
           return [...state,longtable];
         case 'nightstand':
-          let nightstand = new NightStand({id:uuid(),type:"nightstand",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let nightstand = new NightStand({id:uuid(),type:"nightstand",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:nightstand.objVal()});
           } 
           return [...state,nightstand];
         case 'sofa':
-          let sofa = new Sofa({id:uuid(),type:"sofa",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let sofa = new Sofa({id:uuid(),type:"sofa",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:sofa.objVal()});
           }
           return [...state,sofa];
         case 'stool':
-          let stool = new Stool({id:uuid(),type:"stool",posx:-0.5,posz:-0.5,theta:0.9,params:"",roomId:1,colorName:"red"},action.colors);
+          let stool = new Stool({id:uuid(),type:"stool",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
           if(action.socket) {
             action.socket.emit("createFurnishing",{furnishing:stool.objVal()});
           }
@@ -106,6 +106,8 @@ export default function roomReducer(state = [], action) {
           break;
       }
       break;
+    case 'removeAllFurnishings':
+      return []
     default:
       return state;
   }

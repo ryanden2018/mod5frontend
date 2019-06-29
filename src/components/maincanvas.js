@@ -24,14 +24,14 @@ class MainCanvas extends React.Component {
 
   render() {
     if(this.renderer && this.light && this.camera) {
-      let scene = Furnishing.doInit(this.renderer,this.light);
+      let scene = Furnishing.doInit(this.renderer,this.light,this.camera);
       this.props.room.forEach( furnishing => {
         furnishing.renderFurnishing(this.renderer,this.camera,this.light,scene);
       });
     }
     return ( 
       <div>
-        <canvas id="mc" width="800" height="800">Your browser doesn't appear to support HTML5 Canvas.</canvas>
+       <canvas id="mc" width="800" height="800">Your browser doesn't appear to support HTML5 Canvas.</canvas>
       </div>
     );
   }
