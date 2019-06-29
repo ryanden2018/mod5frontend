@@ -83,25 +83,25 @@ export default function roomReducer(state = [], action) {
     case 'ADD_FURNISHING_FROM_OBJECT':
       switch(action.obj.type) {
         case 'bed':
-          return [...state, new Bed(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Bed(action.obj,action.colors)]
         case 'chair':
-          return [...state, new Chair(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Chair(action.obj,action.colors)]
         case 'desk':
-          return [...state, new Desk(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Desk(action.obj,action.colors)]
         case 'table':
-          return [...state, new Table(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Table(action.obj,action.colors)]
         case 'bookcase':
-          return [...state, new BookCase(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new BookCase(action.obj,action.colors)]
         case 'dresser':
-          return [...state, new Dresser(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Dresser(action.obj,action.colors)]
         case 'longtable':
-          return [...state, new LongTable(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new LongTable(action.obj,action.colors)]
         case 'nightstand':
-          return [...state, new NightStand(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new NightStand(action.obj,action.colors)]
         case 'sofa':
-          return [...state, new Sofa(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Sofa(action.obj,action.colors)]
         case 'stool':
-          return [...state, new Stool(action.obj,action.colors)]
+          return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Stool(action.obj,action.colors)]
         default:
           break;
       }

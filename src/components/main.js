@@ -33,6 +33,9 @@ class Main extends React.Component {
                 this.props.unLock();
               }
             });
+            this.state.socket.on("update", payload => {
+              this.props.addFurnishingFromObject(payload.furnishing,this.state.colors);
+            });
             this.state.socket.on("delete", payload=>{
               this.props.deleteFurnishing(payload.furnishingId);
             });
