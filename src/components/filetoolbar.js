@@ -47,6 +47,18 @@ class FileToolbar extends React.Component {
                 }
               );
               this.props.socket.emit("join",{roomId:roomId});
+
+              fetch(`/api/rooms/${roomId}/isOwner`)
+              .then(res=>res.json())
+              .then( results => {
+                if(results.status) {
+                  this.props.setIsOwner(true);
+                } else {
+                  this.props.setIsOwner(false);
+                }
+              }).catch( () => { } );
+
+
             } else {
               window.alert("Could not open room")
             } 
@@ -58,6 +70,13 @@ class FileToolbar extends React.Component {
 
 
   inviteToRoom = () => {
+    let username = window.prompt("Enter username of user to invite");
+    if(username) {
+      fetch(`/api/UserRooms`, {method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify( {recipientUsername: username, roomId: this.props.roomProperties.id} ) } )
+      .catch( () => { } );
+    }
   }
 
   render() {
