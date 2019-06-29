@@ -14,7 +14,7 @@ import uuid from 'uuid/v4';
 
 export default function roomReducer(state = [], action) {
   switch(action.type) {
-    case 'addFurnishing':
+    case 'ADD_FURNISHING':
       switch(action.name) {
         case 'bed':
           let bed = new Bed({id:uuid(),type:"bed",posx:0.0,posz:0.0,theta:0.0,params:"",roomId:1,colorName:"red"},action.colors);
@@ -80,7 +80,7 @@ export default function roomReducer(state = [], action) {
           break;
       }
       break;
-    case 'addFurnishingFromObject':
+    case 'ADD_FURNISHING_FROM_OBJECT':
       switch(action.obj.type) {
         case 'bed':
           return [...state, new Bed(action.obj,action.colors)]
@@ -106,8 +106,37 @@ export default function roomReducer(state = [], action) {
           break;
       }
       break;
-    case 'removeAllFurnishings':
+    case 'REMOVE_ALL_FURNISHINGS':
       return []
+    case 'MOVE_X':
+      let newStateX = state.map(
+        furnishing => furnishing.clone(action.colors)
+      );
+      let furnishingX = newStateX.find( furnishing => furnishing.id === action.furnishingId );
+      furnishingX.posx += action.dx;
+      return newStateX;
+    case 'MOVE_Z':
+      let newStateZ = state.map(
+        furnishing => furnishing.clone(action.colors)
+      );
+      let furnishingZ = newStateZ.find( furnishing => furnishing.id === action.furnishingId );
+      furnishingZ.posz += action.dz;
+      return newStateZ;
+    case 'MOVE_THETA':
+      let newStateTheta = state.map(
+        furnishing => furnishing.clone(action.colors)
+      );
+      let furnishingTheta = newStateTheta.find( furnishing => furnishing.id === action.furnishingId );
+      furnishingTheta.theta += action.dtheta;
+      return newStateTheta;
+    case 'BRIGHTEN':
+      return state.map(
+        furnishing => furnishing.clone(action.colors, furnishing.id === action.furnishingId)
+      );
+    case 'DIM':
+      return state.map(
+        furnishing => furnishing.clone(action.colors)
+      );
     default:
       return state;
   }

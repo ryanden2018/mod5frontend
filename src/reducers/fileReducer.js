@@ -1,10 +1,10 @@
 export default function fileReducer(state = {amOwner:false,roomProperties:null,availableRooms:null}, action) {
   switch(action.type) {
-    case 'setIsOwner':
+    case 'SET_IS_OWNER':
       return {...state, amOwner: action.val};
-    case 'setRoomProperties':
+    case 'SET_ROOM_PROPERTIES':
       return {...state, roomProperties: {...action.roomProperties}}
-    case 'setAvailableRooms':
+    case 'SET_AVAILABLE_ROOMS':
       return {...state, availableRooms: {...action.rooms}}
     default:
       return state

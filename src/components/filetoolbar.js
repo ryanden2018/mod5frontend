@@ -18,6 +18,7 @@ class FileToolbar extends React.Component {
             this.props.setIsOwner(true);
             this.props.setRoomProperties(data);
             this.props.removeAllFurnishings();
+            this.props.socket.emit("join",{roomId:data.id});
           } else {
             window.alert("Could not create room");
           }
@@ -94,10 +95,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addFurnishingFromObject: (obj,colors) => dispatch( {type:"addFurnishingFromObject",obj:obj,colors:colors} ),
-    setIsOwner: (val) => dispatch({type:"setIsOwner",val:val}),
-    setRoomProperties: (roomProperties) => dispatch({type:"setRoomProperties",roomProperties:roomProperties}),
-    removeAllFurnishings: () => dispatch({type:"removeAllFurnishings"})
+    addFurnishingFromObject: (obj,colors) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors} ),
+    setIsOwner: (val) => dispatch({type:"SET_IS_OWNER",val:val}),
+    setRoomProperties: (roomProperties) => dispatch({type:"SET_ROOM_PROPERTIES",roomProperties:roomProperties}),
+    removeAllFurnishings: () => dispatch({type:"REMOVE_ALL_FURNISHINGS"})
   };
 };
 

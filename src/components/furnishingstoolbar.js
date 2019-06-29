@@ -29,7 +29,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addFurnishing: (name,socket,colors) => dispatch( {type:"addFurnishing",name:name,socket:socket,colors:colors} )
+    addFurnishing: (name,socket,colors) => dispatch( {type:"ADD_FURNISHING",name:name,socket:socket,colors:colors} )
   };
 };
 

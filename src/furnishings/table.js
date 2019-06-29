@@ -2,8 +2,13 @@ import Furnishing from "./furnishing"
 import * as THREE from 'three';
 
 export default class Table extends Furnishing {
-  constructor(furnishing,colors) {
-    super(furnishing,colors);
+
+  clone(colors,brighten=false) {
+    return new Table(this.objVal(),colors,brighten);
+  }
+
+  constructor(furnishing,colors,brighten=false) {
+    super(furnishing,colors,brighten);
 
     const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
     

@@ -24,6 +24,14 @@ class Main extends React.Component {
             this.state.socket.on("create",payload=>{
               this.props.addFurnishingFromObject(payload.furnishing,this.state.colors)
             });
+            this.state.socket.on("lockResponse",payload=>{
+              if(payload === "approved") {
+                this.props.setLockApproved();
+                this.props.brighten(this.props.lock.furnishingId,this.state.colors);
+              } else {
+                this.props.unLock();
+              }
+            });
           });
         fetch(`/api/users/${username}/rooms`)
         .then( res => res.json() )
@@ -69,14 +77,18 @@ class Main extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    roomProperties: state.file.roomProperties
+    roomProperties: state.file.roomProperties,
+    lock: state.lock
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    addFurnishingFromObject: (obj,colors) => dispatch( {type:"addFurnishingFromObject",obj:obj,colors:colors} ),
-    setAvailableRooms: rooms => dispatch( {type:"setAvailableRooms",rooms:rooms})
+    addFurnishingFromObject: (obj,colors) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors} ),
+    setAvailableRooms: rooms => dispatch( {type:"SET_AVAILABLE_ROOMS",rooms:rooms}),
+    unLock : () => dispatch({type:"UN_LOCK"}),
+    setLockApproved: () => dispatch({type:"SET_LOCK_APPROVED"}),
+    brighten : (furnishingId, colors) => dispatch( { type:"BRIGHTEN", furnishingId:furnishingId, colors:colors } )
   };
 };
 
