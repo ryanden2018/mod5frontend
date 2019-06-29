@@ -66,7 +66,7 @@ class FileToolbar extends React.Component {
       <FormButton value="New" handleSubmit={() => this.newRoom()} />
       { this.props.availableRooms 
        ? 
-         <select id="openSelect">
+         <select id="openSelect" onChange={e => e.preventDefault()}>
            <option value="-1">Select a room...</option>
            {
              Object.keys(this.props.availableRooms).map(

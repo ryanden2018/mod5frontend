@@ -106,8 +106,6 @@ const mapDispatchToProps = dispatch => {
     setFurnishing : furnishingId => dispatch({type:"SET_FURNISHING",furnishingId:furnishingId}),
     unLock : () => dispatch({type:"UN_LOCK"}),
     setLockRequested: () => dispatch({type:"SET_LOCK_REQUESTED"}),
-    setDragging : () => dispatch({type:"SET_DRAGGING"}),
-    unSetDragging : () => dispatch({type:"UN_SET_DRAGGING"}),
     roomDoNothing : () => dispatch({type:"ROOM_DO_NOTHING"}),
     moveX : (dx,furnishingId,colors) => dispatch({type:"MOVE_X",dx:dx,furnishingId:furnishingId,colors:colors}),
     moveZ : (dz,furnishingId,colors) => dispatch({type:"MOVE_Z",dz:dz,furnishingId:furnishingId,colors:colors}),

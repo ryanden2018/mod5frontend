@@ -1,4 +1,4 @@
-export default function fileReducer(state = {lockRequested:false,mouseDown:false,dragging:false,lockObtained:false,furnishingId:null}, action) {
+export default function fileReducer(state = {lockRequested:false,mouseDown:false,lockObtained:false,furnishingId:null}, action) {
   switch(action.type) {
     case "SET_FURNISHING":
       return {...state, furnishingId: action.furnishingId};
@@ -8,10 +8,6 @@ export default function fileReducer(state = {lockRequested:false,mouseDown:false
       return {...state, lockRequested: true};
     case "SET_LOCK_APPROVED":
       return {...state, lockObtained:true};
-    case "SET_DRAGGING":
-      return {...state, dragging: true};
-    case "UN_SET_DRAGGING":
-      return {...state, dragging: false};
     case "SET_MOUSE_DOWN":
       return {...state, mouseDown: true};
     case "UN_SET_MOUSE_DOWN":
