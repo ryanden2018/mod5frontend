@@ -12,6 +12,11 @@ class ModeToolbar extends React.Component {
     this.props.setMode("rotate")
   }
 
+
+  onDeleteClick = () => {
+    this.props.setMode("delete");
+  }
+
   onColorClick = () => {
     this.props.setMode("color")
   }
@@ -26,12 +31,13 @@ class ModeToolbar extends React.Component {
       <div>
         <FormButton style={{backgroundColor: (this.props.mode.mode === "move" ? "yellow" : "" )}} value="Move" handleSubmit={() => this.onMoveClick()} />
         <FormButton style={{backgroundColor: (this.props.mode.mode === "rotate" ? "yellow" : "" )}} value="Rotate" handleSubmit={() => this.onRotateClick()} />
+        <FormButton style={{backgroundColor: (this.props.mode.mode === "delete" ? "yellow" : "" )}} value="Delete" handleSubmit={() => this.onDeleteClick()} />
         <FormButton style={{backgroundColor: (this.props.mode.mode === "color" ? "yellow" : "" )}} value="Color" handleSubmit={() => this.onColorClick()} />
-        <select onChange={this.handleColorChange}>
+        <select value={this.props.mode.colorName} onChange={this.handleColorChange}>
           {
             Object.keys(this.props.colors).map(
               key => {
-                return ( key === this.props.mode.colorName ? <option selected="selected">{key}</option> : <option>{key}</option>);
+                return  (<option>{key}</option>);
               }
             )
           }
