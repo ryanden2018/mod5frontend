@@ -108,6 +108,8 @@ export default function roomReducer(state = [], action) {
       break;
     case 'DELETE_FURNISHING':
       return state.filter( furnishing => furnishing.id !== action.furnishingId );
+    case 'ROOM_LOGOUT':
+      return [];
     case 'UPDATE_COLOR':
       let furnishingCol = state.find( furnishing => furnishing.id === action.furnishingId );
       if(furnishingCol) {

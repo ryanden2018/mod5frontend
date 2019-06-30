@@ -8,10 +8,11 @@ class FileToolbar extends React.Component {
   newRoom() {
     if(!this.props.roomProperties || window.confirm("Are you sure you want to create a new room?")) {
       let name = window.prompt("New room name")
-      if(name) {
+      let size = window.prompt("Size from 1 to 10")
+      if(name && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
         fetch(`/api/rooms`, { method:"POST",
           headers: {"Content-type":"application/json"},
-          body: JSON.stringify( {room:{name:name,length:20,width:20,height:10}} ) }
+          body: JSON.stringify( {room:{name:name,length:parseInt(size)+3,width:parseInt(size)+3,height:4}} ) }
         ).then( res => res.json() )
         .then( data => {
           if(!data.error) {
@@ -79,6 +80,15 @@ class FileToolbar extends React.Component {
     }
   }
 
+  deleteRoom = () => {
+    fetch(`/api/rooms/${this.props.roomProperties.id}`,{method:'DELETE'})
+    .then( () => { 
+      this.props.resetFile();
+      this.props.removeAllFurnishings();
+    } )
+    .catch( () => { } )
+  }
+
   render() {
     return ( 
     <div>
@@ -100,6 +110,7 @@ class FileToolbar extends React.Component {
       { this.props.availableRooms ? <FormButton value="Open" handleSubmit={() => this.openRoom()} /> : null }
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Invite" handleSubmit={() => this.inviteToRoom()} /> : null }
       { this.props.roomProperties ? <b>Current Room: {this.props.roomProperties.name}</b> : null } 
+      { this.props.roomProperties && this.props.amOwner ? <FormButton value="Delete Room" handleSubmit={() => this.deleteRoom()} /> : null }
     </div> );
   }
 }
@@ -117,7 +128,8 @@ const mapDispatchToProps = dispatch => {
     addFurnishingFromObject: (obj,colors) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors} ),
     setIsOwner: (val) => dispatch({type:"SET_IS_OWNER",val:val}),
     setRoomProperties: (roomProperties) => dispatch({type:"SET_ROOM_PROPERTIES",roomProperties:roomProperties}),
-    removeAllFurnishings: () => dispatch({type:"REMOVE_ALL_FURNISHINGS"})
+    removeAllFurnishings: () => dispatch({type:"REMOVE_ALL_FURNISHINGS"}),
+    resetFile: () => dispatch({type:"RESET_FILE"})
   };
 };
 

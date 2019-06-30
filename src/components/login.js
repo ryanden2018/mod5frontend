@@ -1,4 +1,5 @@
 import React from 'react';
+import FormButton from './formbutton';
 import '../App.css';
 
 export default class Login extends React.Component {
@@ -37,6 +38,7 @@ export default class Login extends React.Component {
   render() {
     return ( 
       <div>
+        <FormButton value="Sign Up" handleSubmit={() => this.props.history.push("/signup")} />
         <form onSubmit={this.handleSubmit}>
           <p>Username: <input type="text" id="username" /></p>
           <p>Password: <input type="password" id="password" /></p>

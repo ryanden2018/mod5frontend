@@ -6,6 +6,10 @@ export default function fileReducer(state = {amOwner:false,roomProperties:null,a
       return {...state, roomProperties: {...action.roomProperties}}
     case 'SET_AVAILABLE_ROOMS':
       return {...state, availableRooms: {...action.rooms}}
+    case 'RESET_FILE':
+      return {...state,amOwner:false,roomProperties:null};
+    case 'FILE_LOGOUT':
+      return {amOwner:false,roomProperties:null,availableRooms:null};
     default:
       return state
   }

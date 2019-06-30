@@ -42,16 +42,26 @@ class Main extends React.Component {
             this.state.socket.on("colorUpdate",payload=>{
               this.props.updateColor(payload.furnishingId,payload.colorName,this.state.colors);
             });
+            this.state.socket.on("availableRooms", payload => {
+              this.props.setAvailableRooms(payload.availableRooms)
+            });
           });
         fetch(`/api/users/${username}/rooms`)
         .then( res => res.json() )
         .then( rooms => {
           this.props.setAvailableRooms(rooms)
         }).catch( () => { } )
+        this.roomsInterval = setInterval( () => {
+          if(this.state.socket) {
+            this.state.socket.emit("getAvailableRooms");
+          }
+        },5000);
       } else {
         this.props.history.push("/");
       }
     });
+
+  
 
     fetch('/api/colors')
     .then( res => res.json() )
@@ -62,12 +72,22 @@ class Main extends React.Component {
         this.setState({colors: newColors});
       });
     }).catch( () => { } )
-
-
   }
+
+
+  componentWillUnmount() {
+    if(this.roomsInterval) {
+      clearInterval(this.roomsInterval);
+    }
+  }
+
 
   handleLogout = (e) => {
     e.preventDefault();
+    this.props.modeLogout();
+    this.props.lockLogout();
+    this.props.fileLogout();
+    this.props.roomLogout();
     fetch(`/api/login`, {method:'DELETE'});
     this.props.history.push("/");
   }
@@ -76,7 +96,8 @@ class Main extends React.Component {
     return ( 
     <div>
       <p>Hello, {this.state.username}!</p>
-      <form onSubmit={this.handleLogout}><input type="submit" value="Logout" /></form>
+      <form style={{display:"inline"}} onSubmit={this.handleLogout}><input type="submit" value="Logout" /></form>
+      <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><input type="submit" value="Manage Account" /></form>
       <FileToolbar username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
       {!!this.props.roomProperties ? <ModeToolbar socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
       {!!this.props.roomProperties ? <FurnishingsToolbar socket={this.state.socket} colors={this.state.colors} username={this.state.username} /> : null }
@@ -102,7 +123,11 @@ const mapDispatchToProps = dispatch => {
     setLockApproved: () => dispatch({type:"SET_LOCK_APPROVED"}),
     brighten : (furnishingId, colors) => dispatch( { type:"BRIGHTEN", furnishingId:furnishingId, colors:colors } ),
     deleteFurnishing : (furnishingId) => dispatch({type:"DELETE_FURNISHING",furnishingId:furnishingId}),
-    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors})
+    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors}),
+    modeLogout : () => dispatch({type:"MODE_LOGOUT"}),
+    lockLogout : () => dispatch({type:"LOCK_LOGOUT"}),
+    fileLogout : () => dispatch({type:"FILE_LOGOUT"}),
+    roomLogout : () => dispatch({type:"ROOM_LOGOUT"})
   };
 };
 
