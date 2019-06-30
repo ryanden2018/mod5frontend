@@ -96,8 +96,8 @@ class Main extends React.Component {
     return ( 
     <div>
       <p>Hello, {this.state.username}!</p>
-      <form style={{display:"inline"}} onSubmit={this.handleLogout}><input type="submit" value="Logout" /></form>
-      <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><input type="submit" value="Manage Account" /></form>
+      <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" style={{fontSize:"15pt"}}>Logout</button></form>
+      <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" style={{fontSize:"15pt"}}>Manage Account</button></form>
       <FileToolbar username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
       {!!this.props.roomProperties ? <ModeToolbar socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
       {!!this.props.roomProperties ? <FurnishingsToolbar socket={this.state.socket} colors={this.state.colors} username={this.state.username} /> : null }
