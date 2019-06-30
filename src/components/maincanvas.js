@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import Furnishing from '../furnishings/furnishing';
 
 const width = 800;
-const height = 800;
+const height = 600;
 
 function angle(x,y) {
   if(x>0) {
@@ -24,8 +24,8 @@ class MainCanvas extends React.Component {
   handleMouseMove = event => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
-        this.props.moveX(3*4*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
-        this.props.moveZ(3*8*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
+        this.props.moveX(2*3*4*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
+        this.props.moveZ(3*3*8*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
         let xval = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
@@ -38,7 +38,7 @@ class MainCanvas extends React.Component {
           let theta1 = angle(diffx,diffy);
           let theta2 = angle(diffx+dx,diffy-dy);
           if(Math.abs(theta1-theta2) < Math.PI) {
-            this.props.moveTheta( 3*(theta1-theta2), this.props.lock.furnishingId, this.props.colors );
+            this.props.moveTheta( 3*(theta2-theta1), this.props.lock.furnishingId, this.props.colors );
           }
         }
       }
@@ -96,14 +96,8 @@ class MainCanvas extends React.Component {
     this.raycaster = new THREE.Raycaster();
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.camera = new THREE.PerspectiveCamera(75,1,0.1,100);
-    this.camera.position.x = 0.0;
-    this.camera.position.y =  5.0;
-    this.camera.position.z = 10.0;
-    this.light = new THREE.DirectionalLight(0xFFFFFF,1,100);
-    this.light.castShadow = true;
-    this.light.shadow.bias = -0.0002;
-    this.light.position.set(-1,2,4);
+    this.camera = new THREE.PerspectiveCamera(75,width/height,0.1,100);
+    this.light = new THREE.PointLight(0xFFFFFF,1,100);
 
     this.interval = setInterval(
       () => {
@@ -111,7 +105,7 @@ class MainCanvas extends React.Component {
           this.props.socket.emit("lockRefresh");
         }
       }
-    , 5000);
+    , 1000);
   }
 
   componentWillUnmount() {
@@ -124,6 +118,64 @@ class MainCanvas extends React.Component {
       this.props.room.forEach( furnishing => {
         furnishing.renderFurnishing(this.renderer,this.camera,this.light,scene);
       });
+
+      this.camera.position.x = 0.0;
+      this.camera.position.y =  this.props.roomProperties.height * 0.75;
+      this.camera.position.z = 0.9*this.props.roomProperties.width/2;
+      this.camera.rotation.x = - 0.15* Math.PI;
+      this.light.castShadow = true;
+      this.light.shadow.bias = -0.0002;
+      this.light.position.set(0,0.9*this.props.roomProperties.height, 0*0.9*this.props.roomProperties.length / 2);
+      this.floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
+        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+      this.floor.receiveShadow = true;
+      this.floor.castShadow = true;
+      this.floor.rotation.x = Math.PI/2;
+      this.ceiling = new THREE.Mesh(
+        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
+        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+      this.ceiling.receiveShadow = true;
+      this.ceiling.castShadow = true;
+      this.ceiling.rotation.x = Math.PI/2;
+      this.ceiling.position.set(0,this.props.roomProperties.height,0);
+      this.wallLeft = new THREE.Mesh(
+        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+      this.wallLeft.receiveShadow = true;
+      this.wallLeft.castShadow = true;
+      this.wallLeft.rotation.y = 1.0*Math.PI/2;
+      this.wallLeft.position.set(-this.props.roomProperties.width/2, this.props.roomProperties.height/2, 0);
+      this.wallRight = new THREE.Mesh(
+        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+      this.wallRight.receiveShadow = true;
+      this.wallRight.castShadow = true;
+      this.wallRight.rotation.y = 1.0*Math.PI/2;
+      this.wallRight.position.set(this.props.roomProperties.width/2, this.props.roomProperties.height/2, 0);
+      this.wallBack = new THREE.Mesh(
+        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+      this.wallBack.receiveShadow = true;
+      this.wallBack.castShadow= true;
+      this.wallBack.position.set(0, this.props.roomProperties.height/2, -this.props.roomProperties.length/2);
+      this.wallFront = new THREE.Mesh(
+        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+      this.wallFront.receiveShadow = true;
+      this.wallFront.castShadow = true;
+      this.wallFront.position.set(0, this.props.roomProperties.height/2, this.props.roomProperties.length/2);
+  
+
+
+
+      scene.add(this.floor);
+      scene.add(this.wallLeft);
+      scene.add(this.wallRight);
+      scene.add(this.wallBack);
+      scene.add(this.ceiling);
+      scene.add(this.wallFront);
+      this.renderer.render(scene,this.camera)
     }
     return ( 
       <div width={width} height={height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
@@ -137,7 +189,8 @@ const mapStateToProps = state => {
   return {
     room: state.room,
     lock: state.lock,
-    mode: state.mode
+    mode: state.mode,
+    roomProperties: state.file.roomProperties
   };
 };
 

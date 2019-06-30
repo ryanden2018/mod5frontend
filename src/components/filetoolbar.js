@@ -8,10 +8,11 @@ class FileToolbar extends React.Component {
   newRoom() {
     if(!this.props.roomProperties || window.confirm("Are you sure you want to create a new room?")) {
       let name = window.prompt("New room name")
-      if(name) {
+      let size = window.prompt("Size from 1 to 10")
+      if(name && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
         fetch(`/api/rooms`, { method:"POST",
           headers: {"Content-type":"application/json"},
-          body: JSON.stringify( {room:{name:name,length:20,width:20,height:10}} ) }
+          body: JSON.stringify( {room:{name:name,length:parseInt(size)+3,width:parseInt(size)+3,height:4}} ) }
         ).then( res => res.json() )
         .then( data => {
           if(!data.error) {
