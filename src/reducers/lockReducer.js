@@ -12,6 +12,8 @@ export default function lockReducer(state = {lockRequested:false,mouseDown:false
       return {...state, mouseDown: true, mousex: action.mousex, mousey: action.mousey};
     case "UN_SET_MOUSE_DOWN":
       return {...state, mouseDown: false};
+    case "LOCK_LOGOUT":
+      return {lockRequested:false,mouseDown:false,lockObtained:false,furnishingId:null,mousex:null,mousey:null};
     default:
       return state
   }
