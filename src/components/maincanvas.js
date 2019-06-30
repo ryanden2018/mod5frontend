@@ -22,14 +22,12 @@ function angle(x,y) {
 
 class MainCanvas extends React.Component {
 
-  state = { cameraDispX: 0.0, cameraDispY: 0.0, cameraDispZ: 0.0,
-    cameraRotDispX: 0.0, cameraRotDispY: 0.0, cameraRotDispZ: 0.0,
+  state = { cameraDispX: 0.0, cameraDispZ: 0.0, cameraRotDispY: 0.0,
     rotatingCameraMode: false }
 
   resetCamera = () => {
     this.setState(
-      { cameraDispX: 0.0, cameraDispY: 0.0, cameraDispZ: 0.0,
-        cameraRotDispX: 0.0, cameraRotDispY: 0.0, cameraRotDispZ: 0.0,
+      { cameraDispX: 0.0, cameraDispZ: 0.0, cameraRotDispY: 0.0, 
         rotatingCameraMode: false }
     );
   }
@@ -58,9 +56,12 @@ class MainCanvas extends React.Component {
       }
     } else if ( this.props.lock.mouseDown ) {
       if( !this.state.rotatingCameraMode ) {
+        let a = -this.props.roomProperties.width*event.movementX/width;
+        let b = -this.props.roomProperties.length*event.movementY/height;
+        let theta = this.state.cameraRotDispY;
         this.setState({
-          cameraDispX: this.state.cameraDispX-this.props.roomProperties.width*event.movementX/width,
-          cameraDispZ: this.state.cameraDispZ-this.props.roomProperties.length*event.movementY/height } )
+          cameraDispX: this.state.cameraDispX + a*Math.cos(theta) + b*Math.sin(theta),
+          cameraDispZ: this.state.cameraDispZ - a*Math.sin(theta) + b*Math.cos(theta) } )
       } else {
         this.setState({
           cameraRotDispY: this.state.cameraRotDispY + 5*event.movementX/width
@@ -154,12 +155,10 @@ class MainCanvas extends React.Component {
         furnishing.renderFurnishing(this.renderer,this.camera,this.light,scene);
       });
 
-      this.camera.position.x = 0.0 + this.state.cameraDispX;;
-      this.camera.position.y =  this.props.roomProperties.height * 0.5 + this.state.cameraDispY;
+      this.camera.position.x = 0.0 + this.state.cameraDispX;
+      this.camera.position.y =  this.props.roomProperties.height * 0.5;
       this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
-      this.camera.rotation.x = 0.0 + this.state.cameraRotDispX;
       this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
-      this.camera.rotation.z = 0.0 + this.state.cameraRotDispZ;
       this.light.castShadow = true;
       this.light.shadow.bias = -0.0002;
       this.light.position.set(0,0.9*this.props.roomProperties.height, 0*0.9*this.props.roomProperties.length / 2);
