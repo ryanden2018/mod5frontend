@@ -2,6 +2,7 @@ import React from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
 import * as THREE from 'three';
+import FormButton from './formbutton';
 import Furnishing from '../furnishings/furnishing';
 
 const width = 800;
@@ -21,11 +22,24 @@ function angle(x,y) {
 
 class MainCanvas extends React.Component {
 
+  state = { cameraDispX: 0.0, cameraDispY: 0.0, cameraDispZ: 0.0,
+    cameraRotDispX: 0.0, cameraRotDispY: 0.0, cameraRotDispZ: 0.0,
+    rotatingCameraMode: false }
+
+  resetCamera = () => {
+    this.setState(
+      { cameraDispX: 0.0, cameraDispY: 0.0, cameraDispZ: 0.0,
+        cameraRotDispX: 0.0, cameraRotDispY: 0.0, cameraRotDispZ: 0.0,
+        rotatingCameraMode: false }
+    );
+  }
+
+
   handleMouseMove = event => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
-        this.props.moveX(2*3*4*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
-        this.props.moveZ(3*3*8*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
+        this.props.moveX(this.props.roomProperties.width*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
+        this.props.moveZ(this.props.roomProperties.length*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
         let xval = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
@@ -41,6 +55,16 @@ class MainCanvas extends React.Component {
             this.props.moveTheta( 3*(theta2-theta1), this.props.lock.furnishingId, this.props.colors );
           }
         }
+      }
+    } else if ( this.props.lock.mouseDown ) {
+      if( !this.state.rotatingCameraMode ) {
+        this.setState({
+          cameraDispX: this.state.cameraDispX-this.props.roomProperties.width*event.movementX/width,
+          cameraDispZ: this.state.cameraDispZ-this.props.roomProperties.length*event.movementY/height } )
+      } else {
+        this.setState({
+          cameraRotDispY: this.state.cameraRotDispY + 5*event.movementX/width
+        });
       }
     }
   }
@@ -81,23 +105,25 @@ class MainCanvas extends React.Component {
   }
 
   handleMouseUp = event => {
-  if(this.props.lock.lockObtained && this.props.lock.furnishingId) {
-      this.props.socket.emit("lockRelease",{furnishing:
-        this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
-      this.props.dim(this.props.lock.furnishingId,this.props.colors);
-      this.props.unLock();
-  }
-  this.props.unSetMouseDown();
+    if(this.props.lock.lockObtained && this.props.lock.furnishingId) {
+        this.props.socket.emit("lockRelease",{furnishing:
+          this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
+        this.props.dim(this.props.lock.furnishingId,this.props.colors);
+        this.props.unLock();
+    }
+    this.props.unSetMouseDown();
   }
 
   componentDidMount() {
     const canvas = document.querySelector("#mc");
-    this.renderer = new THREE.WebGLRenderer({canvas});
+    this.renderer = new THREE.WebGLRenderer({canvas:canvas,physicallyCorrectLights:true});
     this.raycaster = new THREE.Raycaster();
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.camera = new THREE.PerspectiveCamera(75,width/height,0.1,100);
     this.light = new THREE.PointLight(0xFFFFFF,1,100);
+    this.light.decay = 2;
+    this.ambientLight = new THREE.AmbientLight( 0x404040 );
 
     this.interval = setInterval(
       () => {
@@ -112,6 +138,15 @@ class MainCanvas extends React.Component {
     clearInterval(this.interval);
   }
 
+
+  handleMoveCamera = () => {
+    this.setState( { rotatingCameraMode: false } )
+  }
+
+  handleRotateCamera = () => {
+    this.setState( { rotatingCameraMode: true} )
+  }
+
   render() {
     if(this.renderer && this.light && this.camera) {
       let scene = Furnishing.doInit(this.renderer,this.light,this.camera);
@@ -119,10 +154,12 @@ class MainCanvas extends React.Component {
         furnishing.renderFurnishing(this.renderer,this.camera,this.light,scene);
       });
 
-      this.camera.position.x = 0.0;
-      this.camera.position.y =  this.props.roomProperties.height * 0.75;
-      this.camera.position.z = 0.9*this.props.roomProperties.width/2;
-      this.camera.rotation.x = - 0.15* Math.PI;
+      this.camera.position.x = 0.0 + this.state.cameraDispX;;
+      this.camera.position.y =  this.props.roomProperties.height * 0.5 + this.state.cameraDispY;
+      this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
+      this.camera.rotation.x = 0.0 + this.state.cameraRotDispX;
+      this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+      this.camera.rotation.z = 0.0 + this.state.cameraRotDispZ;
       this.light.castShadow = true;
       this.light.shadow.bias = -0.0002;
       this.light.position.set(0,0.9*this.props.roomProperties.height, 0*0.9*this.props.roomProperties.length / 2);
@@ -175,12 +212,18 @@ class MainCanvas extends React.Component {
       scene.add(this.wallBack);
       scene.add(this.ceiling);
       scene.add(this.wallFront);
+      scene.add(this.ambientLight);
       this.renderer.render(scene,this.camera)
     }
     return ( 
-      <div width={width} height={height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
-       <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
-      </div>
+      <>
+        <FormButton value="Reset Camera" handleSubmit={this.resetCamera} />
+        <FormButton style={{backgroundColor: (this.state.rotatingCameraMode ? "white" : "yellow")}} value="Move Camera" handleSubmit={this.handleMoveCamera} />
+        <FormButton style={{backgroundColor: (this.state.rotatingCameraMode ? "yellow" : "white")}} value="Rotate Camera" handleSubmit={this.handleRotateCamera} />
+        <div width={width} height={height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
+          <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
+        </div>
+      </>
     );
   }
 }
