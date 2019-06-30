@@ -36,8 +36,11 @@ class MainCanvas extends React.Component {
   handleMouseMove = event => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
-        this.props.moveX(this.props.roomProperties.width*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
-        this.props.moveZ(this.props.roomProperties.length*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
+        let a = this.props.roomProperties.width*event.movementX/width;
+        let b = this.props.roomProperties.length*event.movementY/height;
+        let theta = this.state.cameraRotDispY;
+        this.props.moveX(a*Math.cos(theta)+b*Math.sin(theta), this.props.lock.furnishingId, this.props.colors);
+        this.props.moveZ(-1*a*Math.sin(theta)+b*Math.cos(theta), this.props.lock.furnishingId, this.props.colors);
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
         let xval = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
