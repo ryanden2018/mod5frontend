@@ -64,12 +64,12 @@ export default class ManageAccount extends React.Component {
           <p>New Password: <input type="password" id="password" /></p>
           <p>Confirm New Password: <input type="password" id="confirmPassword" /></p>
           <p style={{color:"red"}}><b>{this.state.err}</b></p>
-          <p><input type="submit" value="Submit" /></p>
+          <p><button type="submit" style={{fontSize:"15pt"}}>Submit</button></p>
         </form>
         <h2>Delete Account</h2>
         <form onSubmit={this.deleteAccount}>
           <p>Enter Username: <input type="text" id="deleteUsername" /></p>
-          <p><button type="submit">Delete Account</button></p>
+          <p><button type="submit" style={{fontSize:"15pt"}}>Delete Account</button></p>
         </form>
       </div>
     );

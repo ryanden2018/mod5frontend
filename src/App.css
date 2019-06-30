@@ -8,6 +8,26 @@
   pointer-events: none;
 }
 
+input {
+  font-size: 15pt;
+}
+
+select {
+  font-size: 15pt;
+}
+
+option {
+  font-size: 15pt;
+}
+
+p { 
+  font-size: 15pt;
+}
+
+button {
+  margin: 2px;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

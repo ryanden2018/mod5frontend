@@ -43,7 +43,7 @@ export default class Login extends React.Component {
           <p>Username: <input type="text" id="username" /></p>
           <p>Password: <input type="password" id="password" /></p>
           <p style={{color:"red"}}><b>{this.state.err}</b></p>
-          <p><input type="submit" value="Submit" /></p>
+          <p><button type="submit" style={{fontSize:"15pt"}}>Submit</button></p>
         </form>
       </div>
     );
