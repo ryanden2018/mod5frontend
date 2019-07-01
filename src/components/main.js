@@ -7,7 +7,7 @@ import MainCanvas from './maincanvas';
 import { connect } from 'react-redux';
 const io = require("socket.io-client");
 
-const wsloc = "ws://localhost:8000";
+const wsloc = "ws://10.185.5.190:8000";
 
 class Main extends React.Component {
 
