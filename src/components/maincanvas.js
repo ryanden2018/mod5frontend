@@ -23,12 +23,12 @@ function angle(x,y) {
 class MainCanvas extends React.Component {
 
   state = { cameraDispX: 0.0, cameraDispZ: 0.0, cameraRotDispY: 0.0,
-    rotatingCameraMode: false }
+    rotatingCameraMode: false, overheadView: false }
 
   resetCamera = () => {
     this.setState(
       { cameraDispX: 0.0, cameraDispZ: 0.0, cameraRotDispY: 0.0, 
-        rotatingCameraMode: false }
+        rotatingCameraMode: false, overheadView: false }
     );
   }
 
@@ -36,11 +36,16 @@ class MainCanvas extends React.Component {
   handleMouseMove = event => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
-        let a = this.props.roomProperties.width*event.movementX/width;
-        let b = this.props.roomProperties.length*event.movementY/height;
-        let theta = this.state.cameraRotDispY;
-        this.props.moveX(a*Math.cos(theta)+b*Math.sin(theta), this.props.lock.furnishingId, this.props.colors);
-        this.props.moveZ(-1*a*Math.sin(theta)+b*Math.cos(theta), this.props.lock.furnishingId, this.props.colors);
+        if(!this.state.overheadView) {
+          let a = this.props.roomProperties.width*event.movementX/width;
+          let b = this.props.roomProperties.length*event.movementY/height;
+          let theta = this.state.cameraRotDispY;
+          this.props.moveX(a*Math.cos(theta)+b*Math.sin(theta), this.props.lock.furnishingId, this.props.colors);
+          this.props.moveZ(-1*a*Math.sin(theta)+b*Math.cos(theta), this.props.lock.furnishingId, this.props.colors);
+        } else {
+          this.props.moveX(this.props.roomProperties.width*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
+          this.props.moveZ(this.props.roomProperties.length*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
+        }
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
         let xval = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
@@ -144,11 +149,15 @@ class MainCanvas extends React.Component {
 
 
   handleMoveCamera = () => {
-    this.setState( { rotatingCameraMode: false } )
+    this.setState( { rotatingCameraMode: false, overheadView: false } )
   }
 
   handleRotateCamera = () => {
-    this.setState( { rotatingCameraMode: true} )
+    this.setState( { rotatingCameraMode: true, overheadView: false } )
+  }
+
+  handleOverhead = () => {
+    this.setState( { rotatingCameraMode: false, overheadView: true } );
   }
 
   render() {
@@ -158,10 +167,21 @@ class MainCanvas extends React.Component {
         furnishing.renderFurnishing(this.renderer,this.camera,this.light,scene);
       });
 
-      this.camera.position.x = 0.0 + this.state.cameraDispX;
-      this.camera.position.y =  this.props.roomProperties.height * 0.5;
-      this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
-      this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+      if(!this.state.overheadView) {
+        this.camera.position.x = 0.0 + this.state.cameraDispX;
+        this.camera.position.y =  this.props.roomProperties.height * 0.5;
+        this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
+        this.camera.rotation.x = 0.0;
+        this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+        this.camera.rotation.z = 0.0;
+      } else {
+        this.camera.position.x = 0.0;
+        this.camera.position.y = this.props.roomProperties.width*0.95;
+        this.camera.position.z = 0.0;
+        this.camera.rotation.x = -Math.PI/2;
+        this.camera.rotation.y = 0.0;
+        this.camera.rotation.z = 0.0;
+      }
       this.light.castShadow = true;
       this.light.shadow.bias = -0.0002;
       this.light.position.set(0,0.9*this.props.roomProperties.height, 0*0.9*this.props.roomProperties.length / 2);
@@ -174,34 +194,35 @@ class MainCanvas extends React.Component {
       this.floor.position.y = 0.15;
       this.ceiling = new THREE.Mesh(
         new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
-        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+        new THREE.MeshPhongMaterial({color:"white"}) );
       this.ceiling.receiveShadow = true;
       this.ceiling.castShadow = true;
       this.ceiling.rotation.x = Math.PI/2;
       this.ceiling.position.set(0,this.props.roomProperties.height,0);
       this.wallLeft = new THREE.Mesh(
         new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+        new THREE.MeshPhongMaterial({color:"white"}) );
       this.wallLeft.receiveShadow = true;
       this.wallLeft.castShadow = true;
       this.wallLeft.rotation.y = 1.0*Math.PI/2;
       this.wallLeft.position.set(-this.props.roomProperties.width/2, this.props.roomProperties.height/2, 0);
       this.wallRight = new THREE.Mesh(
         new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+        new THREE.MeshPhongMaterial({color:"white"}) );
       this.wallRight.receiveShadow = true;
       this.wallRight.castShadow = true;
-      this.wallRight.rotation.y = 1.0*Math.PI/2;
+      this.wallRight.rotation.y = -1.0*Math.PI/2;
       this.wallRight.position.set(this.props.roomProperties.width/2, this.props.roomProperties.height/2, 0);
       this.wallBack = new THREE.Mesh(
         new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+        new THREE.MeshPhongMaterial({color:"white"}) );
       this.wallBack.receiveShadow = true;
       this.wallBack.castShadow= true;
       this.wallBack.position.set(0, this.props.roomProperties.height/2, -this.props.roomProperties.length/2);
       this.wallFront = new THREE.Mesh(
         new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+        new THREE.MeshPhongMaterial({color:"white"}) );
+      this.wallFront.rotation.y = Math.PI;
       this.wallFront.receiveShadow = true;
       this.wallFront.castShadow = true;
       this.wallFront.position.set(0, this.props.roomProperties.height/2, this.props.roomProperties.length/2);
@@ -221,8 +242,9 @@ class MainCanvas extends React.Component {
     return ( 
       <>
         <FormButton value="Reset Camera" handleSubmit={this.resetCamera} />
-        <FormButton style={{backgroundColor: (this.state.rotatingCameraMode ? "white" : "yellow")}} value="Move Camera" handleSubmit={this.handleMoveCamera} />
-        <FormButton style={{backgroundColor: (this.state.rotatingCameraMode ? "yellow" : "white")}} value="Rotate Camera" handleSubmit={this.handleRotateCamera} />
+        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode || this.state.overheadView) ? "white" : "yellow")}} value="Move Camera" handleSubmit={this.handleMoveCamera} />
+        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} value="Rotate Camera" handleSubmit={this.handleRotateCamera} />
+        <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" handleSubmit={this.handleOverhead} />
         <div width={width} height={height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
           <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
         </div>
