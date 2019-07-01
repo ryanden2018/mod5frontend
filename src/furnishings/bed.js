@@ -12,7 +12,7 @@ export default class Bed extends Furnishing {
 
     const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
   
-    let scale = 0.9;
+    let scale = 1.1;
 
     const cube = new THREE.Mesh( new THREE.BoxGeometry(2*scale,0.75*scale,2.5*scale),material);
     cube.position.set(0.0,-0.1*scale+0.8*scale,0.0)

@@ -34,6 +34,7 @@ class MainCanvas extends React.Component {
 
 
   handleMouseMove = event => {
+    event.preventDefault();
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
         if(!this.state.overheadView) {
@@ -62,6 +63,9 @@ class MainCanvas extends React.Component {
           }
         }
       }
+
+      this.props.socket.emit("mouseMoved",{furnishing:
+        this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
     } else if ( this.props.lock.mouseDown ) {
       if( !this.state.rotatingCameraMode ) {
         let a = -this.props.roomProperties.width*event.movementX/width;
@@ -79,6 +83,7 @@ class MainCanvas extends React.Component {
   }
 
   handleMouseDown = event => {
+    event.preventDefault();
     let mouse = new THREE.Vector2();
     var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     mouse.x = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
@@ -114,6 +119,7 @@ class MainCanvas extends React.Component {
   }
 
   handleMouseUp = event => {
+    event.preventDefault();
     if(this.props.lock.lockObtained && this.props.lock.furnishingId) {
         this.props.socket.emit("lockRelease",{furnishing:
           this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
@@ -145,6 +151,7 @@ class MainCanvas extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    this.interval = null;
   }
 
 
