@@ -10,7 +10,7 @@ export default class Chair extends Furnishing {
     super(furnishing,colors,brighten);
 
     const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
-    var scale = 0.6;
+    var scale = 1.5*0.6;
     const backing = new THREE.Mesh( new THREE.BoxGeometry( scale*0.1,scale*1,scale*1),material);
     backing.position.set(scale*0.55,scale*1.4,scale*0.0);
     backing.rotation.z = -0.25;

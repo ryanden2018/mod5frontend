@@ -171,6 +171,7 @@ class MainCanvas extends React.Component {
       this.floor.receiveShadow = true;
       this.floor.castShadow = true;
       this.floor.rotation.x = Math.PI/2;
+      this.floor.position.y = 0.15;
       this.ceiling = new THREE.Mesh(
         new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
         new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );

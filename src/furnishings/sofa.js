@@ -10,38 +10,39 @@ export default class Sofa extends Furnishing {
   constructor(furnishing,colors,brighten=false) {
     super(furnishing,colors,brighten);
 
+    let scale = 1.35;
     const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
     
-    const cube = new THREE.Mesh( new THREE.BoxGeometry(0.8,0.35,2.5),material);
-    cube.position.set(0.0,-0.1+0.6-0.15,0.0)
+    const cube = new THREE.Mesh( new THREE.BoxGeometry(0.8*scale,0.35*scale,2.5*scale),material);
+    cube.position.set(0.0,-0.1*scale+0.6*scale-0.15*scale,0.0)
 
-    let backing = new THREE.Mesh(new THREE.BoxGeometry( 0.2, 0.8, 2.5),material);
-    backing.position.set(0.375,1-0.15,0.0)
+    let backing = new THREE.Mesh(new THREE.BoxGeometry( 0.2*scale, 0.8*scale, 2.5*scale),material);
+    backing.position.set(0.375*scale,1*scale-0.15*scale,0.0)
     backing.rotation.z = -0.2
 
-    let armrest1 = new THREE.Mesh( new THREE.BoxGeometry( 0.6, 0.5, 0.1),material);
-    armrest1.position.set(0.0,0.7-0.15,1.2);
+    let armrest1 = new THREE.Mesh( new THREE.BoxGeometry( 0.6*scale, 0.5*scale, 0.1*scale),material);
+    armrest1.position.set(0.0,0.7*scale-0.15*scale,1.2*scale);
 
-    let armrest2 = new THREE.Mesh( new THREE.BoxGeometry( 0.6, 0.5, 0.1),material);
-    armrest2.position.set(0.0,0.7-0.15,-1.2);
+    let armrest2 = new THREE.Mesh( new THREE.BoxGeometry( 0.6*scale, 0.5*scale, 0.1*scale),material);
+    armrest2.position.set(0.0,0.7*scale-0.15*scale,-1.2*scale);
 
 
-    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.4,25 ),
+    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.4*scale,25 ),
       material ) 
-    cylinder1.position.set(-0.3,0.2,1.0)
+    cylinder1.position.set(-0.3*scale,0.2*scale,1.0*scale)
     
-    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.4,25 ),
+    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.4*scale,25 ),
       material ) 
-    cylinder2.position.set(0.3,0.2,1.0)
+    cylinder2.position.set(0.3*scale,0.2*scale,1.0*scale)
     
-    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.4,25 ),
+    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.4*scale,25 ),
       material ) 
-    cylinder3.position.set(-0.3,0.2,-1.0)
+    cylinder3.position.set(-0.3*scale,0.2*scale,-1.0*scale)
 
     
-    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1,0.1,0.4,25 ),
+    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.4*scale,25 ),
       material )
-    cylinder4.position.set(0.3,0.2,-1.0)
+    cylinder4.position.set(0.3*scale,0.2*scale,-1.0*scale)
 
     
     this.threeDimMeshes.push(cube);
