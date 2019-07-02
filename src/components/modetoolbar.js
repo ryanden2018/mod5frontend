@@ -37,7 +37,7 @@ class ModeToolbar extends React.Component {
           {
             Object.keys(this.props.colors).map(
               key => {
-                return  (<option>{key}</option>);
+                return  (<option>{this.props.alphanumericFilter(key)}</option>);
               }
             )
           }

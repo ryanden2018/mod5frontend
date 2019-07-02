@@ -7,9 +7,9 @@ class FileToolbar extends React.Component {
 
   newRoom() {
     if(!this.props.roomProperties || window.confirm("Are you sure you want to create a new room?")) {
-      let name = window.prompt("New room name")
-      let size = window.prompt("Size from 1 to 10")
-      if(name && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
+      let name = this.props.alphanumericFilter(window.prompt("New room name (must be alphanumeric, no spaces)"))
+      let size = this.props.alphanumericFilter(window.prompt("Size from 1 to 10"))
+      if(name && size && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
         fetch(`/api/rooms`, { method:"POST",
           headers: {"Content-type":"application/json"},
           body: JSON.stringify( {room:{name:name,length:parseInt(size)+3,width:parseInt(size)+3,height:4}} ) }
@@ -33,11 +33,11 @@ class FileToolbar extends React.Component {
     let roomId = parseInt(document.querySelector("#openSelect").value);
     if(roomId !== -1) {
       if(!this.props.roomProperties || window.confirm("Are you sure you want to open this room?")) {
-        fetch(`/api/rooms/${roomId}`)
+        fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}`)
         .then( res => res.json() )
         .then( room => {
           this.props.setRoomProperties(room);
-          fetch(`/api/rooms/${roomId}/furnishings`)
+          fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}/furnishings`)
           .then(res => res.json() )
           .then( furnishings => {
             if(!furnishings.error) {
@@ -49,7 +49,7 @@ class FileToolbar extends React.Component {
               );
               this.props.socket.emit("join",{roomId:roomId});
 
-              fetch(`/api/rooms/${roomId}/isOwner`)
+              fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}/isOwner`)
               .then(res=>res.json())
               .then( results => {
                 if(results.status) {
@@ -71,17 +71,17 @@ class FileToolbar extends React.Component {
 
 
   inviteToRoom = () => {
-    let username = window.prompt("Enter username of user to invite");
+    let username = this.props.alphanumericFilter(window.prompt("Enter username of user to invite"));
     if(username) {
       fetch(`/api/UserRooms`, {method:"POST",
         headers:{"Content-Type":"application/json"},
-        body: JSON.stringify( {recipientUsername: username, roomId: this.props.roomProperties.id} ) } )
+        body: JSON.stringify( {recipientUsername: username, roomId: this.props.alphanumericFilter(this.props.roomProperties.id)} ) } )
       .catch( () => { } );
     }
   }
 
   deleteRoom = () => {
-    fetch(`/api/rooms/${this.props.roomProperties.id}`,{method:'DELETE'})
+    fetch(`/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE'})
     .then( () => { 
       this.props.socket.emit("roomDeleted");
       this.props.resetFile();
@@ -102,7 +102,7 @@ class FileToolbar extends React.Component {
              Object.keys(this.props.availableRooms).map(
                key => {
                  let room = this.props.availableRooms[key]
-                 return ( <option value={room.id}>{room.name}</option> );
+                 return ( <option value={this.props.alphanumericFilter(room.id)}>{this.props.alphanumericFilter(room.name)}</option> );
                }
              )
            }
@@ -110,7 +110,7 @@ class FileToolbar extends React.Component {
        : null }
       { this.props.availableRooms ? <FormButton value="Open" handleSubmit={() => this.openRoom()} /> : null }
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Invite" handleSubmit={() => this.inviteToRoom()} /> : null }
-      { this.props.roomProperties ? <b>Current Room: {this.props.roomProperties.name}</b> : null } 
+      { this.props.roomProperties ? <b>Current Room: {this.props.alphanumericFilter(this.props.roomProperties.name)}</b> : null } 
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Delete Room" handleSubmit={() => this.deleteRoom()} /> : null }
     </div> );
   }
