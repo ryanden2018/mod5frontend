@@ -10,7 +10,7 @@ export default class Sofa extends Furnishing {
   constructor(furnishing,colors,brighten=false) {
     super(furnishing,colors,brighten);
 
-    let scale = 1.35;
+    let scale = 1.45;
     const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
     
     const cube = new THREE.Mesh( new THREE.BoxGeometry(0.8*scale,0.35*scale,2.5*scale),material);

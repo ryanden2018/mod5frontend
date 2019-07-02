@@ -25,6 +25,8 @@ class FileToolbar extends React.Component {
           }
         })
         .catch( () => window.alert("Could not create room") );
+      } else {
+        window.alert("Could not create room");
       }
     }
   }

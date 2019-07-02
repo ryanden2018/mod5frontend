@@ -81,6 +81,10 @@ export default function roomReducer(state = [], action) {
       }
       break;
     case 'ADD_FURNISHING_FROM_OBJECT':
+      var furnishingToDelete = state.find( furnishing => furnishing.id === action.obj.id );
+      if(furnishingToDelete) {
+        furnishingToDelete.dispose();
+      }
       switch(action.obj.type) {
         case 'bed':
           return [...state.filter( furnishing => furnishing.id !== action.obj.id ), new Bed(action.obj,action.colors)]
@@ -107,48 +111,74 @@ export default function roomReducer(state = [], action) {
       }
       break;
     case 'DELETE_FURNISHING':
+      var furnishingToDelete = state.find( furnishing => furnishing.id === action.furnishingId );
+      if(furnishingToDelete) {
+        furnishingToDelete.dispose();
+      }
       return state.filter( furnishing => furnishing.id !== action.furnishingId );
     case 'ROOM_LOGOUT':
+      for(var i = 0; i < state.length; i++) {
+        state[i].dispose();
+      }
       return [];
     case 'UPDATE_COLOR':
       let furnishingCol = state.find( furnishing => furnishing.id === action.furnishingId );
       if(furnishingCol) {
         furnishingCol.colorName = action.colorName;
+        furnishingCol.dispose();
         return [...state.filter(furnishing => furnishing.id !== action.furnishingId),
           furnishingCol.clone(action.colors)];
       } else {
         return state;
       }
     case 'REMOVE_ALL_FURNISHINGS':
+      for(var i = 0; i < state.length; i++) {
+        state[i].dispose();
+      }
       return []
     case 'MOVE_X':
       let newStateX = state.map(
-        furnishing => furnishing.clone(action.colors, furnishing.id === action.furnishingId)
+        furnishing => {
+          furnishing.dispose();
+          return furnishing.clone(action.colors, furnishing.id === action.furnishingId);
+        }
       );
       let furnishingX = newStateX.find( furnishing => furnishing.id === action.furnishingId );
       furnishingX.posx += action.dx;
       return newStateX;
     case 'MOVE_Z':
       let newStateZ = state.map(
-        furnishing => furnishing.clone(action.colors, furnishing.id === action.furnishingId)
+        furnishing => {
+          furnishing.dispose();
+          return furnishing.clone(action.colors, furnishing.id === action.furnishingId);
+        }
       );
       let furnishingZ = newStateZ.find( furnishing => furnishing.id === action.furnishingId );
       furnishingZ.posz += action.dz;
       return newStateZ;
     case 'MOVE_THETA':
       let newStateTheta = state.map(
-        furnishing => furnishing.clone(action.colors, furnishing.id === action.furnishingId)
+        furnishing => {
+          furnishing.dispose();
+          return furnishing.clone(action.colors, furnishing.id === action.furnishingId);
+        }
       );
       let furnishingTheta = newStateTheta.find( furnishing => furnishing.id === action.furnishingId );
       furnishingTheta.theta += action.dtheta;
       return newStateTheta;
     case 'BRIGHTEN':
       return state.map(
-        furnishing => furnishing.clone(action.colors, furnishing.id === action.furnishingId)
+        furnishing => {
+          furnishing.dispose();
+          return furnishing.clone(action.colors, furnishing.id === action.furnishingId);
+        }
       );
     case 'DIM':
       return state.map(
-        furnishing => furnishing.clone(action.colors)
+        furnishing => {
+          furnishing.dispose();
+          return furnishing.clone(action.colors);
+        }
       );
     default:
       return state;
