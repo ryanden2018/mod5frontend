@@ -60,7 +60,7 @@ export default class Signup extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{width:"100%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Return to Login" handleSubmit={() => this.props.history.push("/")} />
         <form onSubmit={this.handleSubmit}>
           <p>Username: <input type="text" id="username" /></p>
