@@ -9,28 +9,29 @@ export default class NightStand extends Furnishing {
 
   constructor(furnishing,colors,brighten=false) {
     super(furnishing,colors,brighten);
+    let scale = 1.5;
 
     const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
     
-    const cube = new THREE.Mesh( new THREE.BoxGeometry(0.3,0.4,0.3),material);
-    cube.position.set(0.0,-0.1+1.0,0.0)
+    const cube = new THREE.Mesh( new THREE.BoxGeometry(0.3*scale,0.4*scale,0.3*scale),material);
+    cube.position.set(0.0,-0.1*scale+1.0*scale,0.0)
 
-    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02,0.02,0.8,25 ),
+    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
       material ) 
-    cylinder1.position.set(-0.13,-0.5+1,0.13)
+    cylinder1.position.set(-0.13*scale,-0.5*scale+1*scale,0.13*scale)
     
-    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02,0.02,0.8,25 ),
+    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
       material ) 
-    cylinder2.position.set(0.13,-0.5+1,0.13)
+    cylinder2.position.set(0.13*scale,-0.5*scale+1*scale,0.13*scale)
     
-    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02,0.02,0.8,25 ),
+    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
       material ) 
-    cylinder3.position.set(-0.13,-0.5+1,-0.13)
+    cylinder3.position.set(-0.13*scale,-0.5*scale+1*scale,-0.13*scale)
 
     
-    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02,0.02,0.8,25 ),
+    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
       material )
-    cylinder4.position.set(0.13,-0.5+1,-0.13)
+    cylinder4.position.set(0.13*scale,-0.5*scale+1*scale,-0.13*scale)
 
     
     this.threeDimMeshes.push(cube);
