@@ -1,12 +1,14 @@
 import React from 'react';
 import '../App.css';
-import FurnishingsToolbar from './furnishingstoolbar';
 import FileToolbar from './filetoolbar';
 import ModeToolbar from './modetoolbar';
 import MainCanvas from './maincanvas';
 import { connect } from 'react-redux';
-const io = require("socket.io-client");
+import SvgIcon from '@material-ui/core/SvgIcon';
+import AccountBox from '@material-ui/icons/AccountBox';
+import DirectionsWalk from '@material-ui/icons/DirectionsWalk';
 
+const io = require("socket.io-client");
 const wsloc = "ws://localhost:8000";
 
 class Main extends React.Component {
@@ -110,13 +112,14 @@ class Main extends React.Component {
   render() {
     return ( 
     <div>
-      <p>Hello, {this.props.alphanumericFilter(this.state.username)}!</p>
       <p style={{color:"red"}}><b>{this.state.errMsg}</b></p>
-      <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" style={{fontSize:"15pt"}}>Logout</button></form>
-      <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" style={{fontSize:"15pt"}}>Manage Account</button></form>
+      <div>
+      <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" title="Logout"><SvgIcon><DirectionsWalk /></SvgIcon></button></form>
+      <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" title="Manage Account"><SvgIcon><AccountBox /></SvgIcon></button></form>
       <FileToolbar alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
+      </div>
+      
       {!!this.props.roomProperties ? <ModeToolbar alphanumericFilter={this.props.alphanumericFilter} socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
-      {!!this.props.roomProperties ? <FurnishingsToolbar alphanumericFilter={this.props.alphanumericFilter} socket={this.state.socket} colors={this.state.colors} username={this.state.username} /> : null }
       {!!this.props.roomProperties ? <MainCanvas alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
     </div> );
   }
