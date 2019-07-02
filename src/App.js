@@ -12,7 +12,7 @@ export default class App extends React.Component {
   // allowSpaces : allow spaces if true, default false
   alphanumericFilter = (string, allowSpaces = false) => {
     var match = ( allowSpaces ? /^[a-zA-Z0-9 ]*$/ : /^[a-zA-Z0-9]*$/ );
-    if( string.toString().match(match) ) {
+    if( string && string.toString && string.toString().match(match) ) {
       return string;
     } else {
       return null;

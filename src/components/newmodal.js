@@ -1,0 +1,19 @@
+import React from 'react';
+import '../App.css';
+import FormButton from './formbutton';
+import Modal from './modal';
+
+export default class NewModal extends Modal {
+  render() {
+    return (
+      <div style={this.style}>
+        <p>Enter room name (alphanumeric only, no spaces), and size from 1 to 10:</p>
+        <p><input type="text" id="roomName" placeholder="Room name" />
+        <input type="text" id="roomSize" placeholder="Room size" /></p>
+        <p><FormButton value="Cancel" handleSubmit={this.props.cancelCallback} />
+        <FormButton value="OK" handleSubmit={() => this.props.okCallback(document.querySelector("#roomName").value,
+          document.querySelector("#roomSize").value)} /></p>
+      </div>
+    );
+  }
+}
