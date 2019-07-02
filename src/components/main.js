@@ -7,11 +7,11 @@ import MainCanvas from './maincanvas';
 import { connect } from 'react-redux';
 const io = require("socket.io-client");
 
-const wsloc = "ws://10.185.5.190:8000";
+const wsloc = "ws://localhost:8000";
 
 class Main extends React.Component {
 
-  state = { username:"", socket:null, colors:{} };
+  state = { username:"", socket:null, colors:{}, errMsg: "" };
 
   componentDidMount() {
     fetch(`/api/loggedin`)
@@ -22,6 +22,17 @@ class Main extends React.Component {
         this.setState({username:username});
         this.setState({socket: io(wsloc,{transports:['websocket']}) },
           () => {
+
+            this.state.socket.on('disconnect', () => {
+              this.setState({errMsg: "There is a problem with the connection."});
+              this.props.resetEverything();
+            });
+
+            this.state.socket.on('roomDeleted',() => {
+              this.setState({errMsg:"The room was deleted."});
+              this.props.resetEverything();
+            });
+
             this.state.socket.on("create",payload=>{
               this.props.addFurnishingFromObject(payload.furnishing,this.state.colors)
             });
@@ -78,6 +89,10 @@ class Main extends React.Component {
   componentWillUnmount() {
     if(this.roomsInterval) {
       clearInterval(this.roomsInterval);
+      this.roomsInterval = null;
+    }
+    if(this.state.socket && this.state.socket.emit) {
+      this.state.socket.emit("removeFromAllRooms");
     }
   }
 
@@ -96,6 +111,7 @@ class Main extends React.Component {
     return ( 
     <div>
       <p>Hello, {this.state.username}!</p>
+      <p style={{color:"red"}}><b>{this.state.errMsg}</b></p>
       <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" style={{fontSize:"15pt"}}>Logout</button></form>
       <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" style={{fontSize:"15pt"}}>Manage Account</button></form>
       <FileToolbar username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
@@ -127,7 +143,8 @@ const mapDispatchToProps = dispatch => {
     modeLogout : () => dispatch({type:"MODE_LOGOUT"}),
     lockLogout : () => dispatch({type:"LOCK_LOGOUT"}),
     fileLogout : () => dispatch({type:"FILE_LOGOUT"}),
-    roomLogout : () => dispatch({type:"ROOM_LOGOUT"})
+    roomLogout : () => dispatch({type:"ROOM_LOGOUT"}),
+    resetEverything : () => { dispatch({type:"REMOVE_ALL_FURNISHINGS"}); dispatch({type:"RESET_FILE"}); dispatch({type:"LOCK_LOGOUT"}); dispatch({type:"MODE_LOGOUT"}); }
   };
 };
 

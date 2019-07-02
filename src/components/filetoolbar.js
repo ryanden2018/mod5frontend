@@ -83,6 +83,7 @@ class FileToolbar extends React.Component {
   deleteRoom = () => {
     fetch(`/api/rooms/${this.props.roomProperties.id}`,{method:'DELETE'})
     .then( () => { 
+      this.props.socket.emit("roomDeleted");
       this.props.resetFile();
       this.props.removeAllFurnishings();
     } )
