@@ -30,6 +30,7 @@ class Main extends React.Component {
 
             this.state.socket.on('roomDeleted',() => {
               this.setState({errMsg:"The room was deleted."});
+              this.state.socket.emit("removeFromAllRooms");
               this.props.resetEverything();
             });
 
