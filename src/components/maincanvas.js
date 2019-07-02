@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 import * as THREE from 'three';
 import FormButton from './formbutton';
 import Furnishing from '../furnishings/furnishing';
+import ThreeSixty from '@material-ui/icons/ThreeSixty';
+import BorderOuter from '@material-ui/icons/BorderOuter';
+import CameraAlt from '@material-ui/icons/CameraAlt';
+import CenterFocusStrong from '@material-ui/icons/CenterFocusStrong';
 
 const width = 800;
 const height = 600;
@@ -308,10 +312,10 @@ class MainCanvas extends React.Component {
     }
     return ( 
       <>
-        <FormButton value="Reset Camera" handleSubmit={this.resetCamera} />
-        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode || this.state.overheadView) ? "white" : "yellow")}} value="Move Camera" handleSubmit={this.handleMoveCamera} />
-        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} value="Rotate Camera" handleSubmit={this.handleRotateCamera} />
-        <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" handleSubmit={this.handleOverhead} />
+        <FormButton icon={<CameraAlt />} value="Reset Camera" handleSubmit={this.resetCamera} />
+        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode || this.state.overheadView) ? "white" : "yellow")}} icon={<CenterFocusStrong />} value="Move Camera" handleSubmit={this.handleMoveCamera} />
+        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} />
+        <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" icon={<BorderOuter />} handleSubmit={this.handleOverhead} />
         <div width={width} height={height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
           <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
         </div>

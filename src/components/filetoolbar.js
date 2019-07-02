@@ -7,6 +7,10 @@ import ErrorModal from './errormodal';
 import OpenModal from './openmodal';
 import InviteModal from './invitemodal';
 import ConfirmModal from './confirmmodal';
+import DeleteForever from '@material-ui/icons/DeleteForever';
+import Create from '@material-ui/icons/Create';
+import FolderOpen from '@material-ui/icons/FolderOpen';
+import PersonAdd from '@material-ui/icons/PersonAdd';
 
 class FileToolbar extends React.Component {
 
@@ -145,12 +149,12 @@ class FileToolbar extends React.Component {
         null
       }
     <div>
-      <FormButton value="New" handleSubmit={() => this.setState({modal:"new"})} />
+      <FormButton value="New" icon={<Create />} handleSubmit={() => this.setState({modal:"new"})} />
       
-      { this.props.availableRooms ? <FormButton value="Open" handleSubmit={() => this.setState({modal:"open"})} /> : null }
-      { this.props.roomProperties && this.props.amOwner ? <FormButton value="Invite" handleSubmit={() => this.setState({modal:"invite"})} /> : null }
+      { this.props.availableRooms ? <FormButton value="Open" icon={<FolderOpen />} handleSubmit={() => this.setState({modal:"open"})} /> : null }
+      { this.props.roomProperties && this.props.amOwner ? <FormButton value="Invite" icon={<PersonAdd />} handleSubmit={() => this.setState({modal:"invite"})} /> : null }
+      { this.props.roomProperties && this.props.amOwner ? <FormButton value="Delete Room" icon={<DeleteForever />} handleSubmit={() => this.setState({modal:"delete"})} /> : null }
       { this.props.roomProperties ? <b>Current Room: {this.props.alphanumericFilter(this.props.roomProperties.name)}</b> : null } 
-      { this.props.roomProperties && this.props.amOwner ? <FormButton value="Delete Room" handleSubmit={() => this.setState({modal:"delete"})} /> : null }
     </div>
     </> );
   }
