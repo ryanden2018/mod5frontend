@@ -47,7 +47,7 @@ class ModeToolbar extends React.Component {
       <span>
         <FormButton style={{backgroundColor: (this.props.mode.mode === "move" ? "yellow" : "" )}} value="Move" icon={<PanTool />} handleSubmit={() => this.onMoveClick()} />
         <FormButton icon={<RotateLeft />} style={{backgroundColor: (this.props.mode.mode === "rotate" ? "yellow" : "" )}} value="Rotate" handleSubmit={() => this.onRotateClick()} />
-        <FormButton icon={<AddCircle />} handleSubmit={() => this.setState({modal:"add"})} />
+        <FormButton icon={<AddCircle />} value="Add furnishing" handleSubmit={() => this.setState({modal:"add"})} />
         <FormButton icon={<Delete />} style={{backgroundColor: (this.props.mode.mode === "delete" ? "yellow" : "" )}} value="Delete" handleSubmit={() => this.onDeleteClick()} />
         <FormButton style={{backgroundColor: (this.props.mode.mode === "color" ? "yellow" : "" )}} value="Color" icon={<ColorLens />} handleSubmit={() => this.onColorClick()} />
         <select value={this.props.mode.colorName} onChange={this.handleColorChange}>
