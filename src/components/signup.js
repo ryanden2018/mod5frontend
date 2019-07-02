@@ -18,9 +18,14 @@ export default class Signup extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let username = document.querySelector("#username").value;
-    let password = document.querySelector("#password").value;
-    let confirmPassword = document.querySelector("#confirmPassword").value;
+    let username = this.props.alphanumericFilter(document.querySelector("#username").value);
+    let password = this.props.alphanumericFilter(document.querySelector("#password").value);
+    let confirmPassword = this.props.alphanumericFilter(document.querySelector("#confirmPassword").value);
+
+    if( (!username) || (!password) || (!confirmPassword) ) {
+      this.setState({err:"Username and password must be alphanumeric."})
+      return;
+    }
 
     fetch(`/api/${username}/exists`)
     .then(res=>res.json())

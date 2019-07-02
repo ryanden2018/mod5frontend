@@ -18,10 +18,15 @@ export default class ManageAccount extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let username = document.querySelector("#username").value;
-    let oldPassword = document.querySelector("#oldPassword").value;
-    let password = document.querySelector("#password").value;
-    let confirmPassword = document.querySelector("#confirmPassword").value;
+    let username = this.props.alphanumericFilter(document.querySelector("#username").value);
+    let oldPassword = this.props.alphanumericFilter(document.querySelector("#oldPassword").value);
+    let password = this.props.alphanumericFilter(document.querySelector("#password").value);
+    let confirmPassword = this.props.alphanumericFilter(document.querySelector("#confirmPassword").value);
+
+    if( (!username) || (!oldPassword) || (!password) || (!confirmPassword) ) {
+      this.setState({err:"Username and password must be alphanumeric."});
+      return;
+    }
 
     if(password !== confirmPassword) {
       this.setState({err: "New passwords must match"});
@@ -43,8 +48,8 @@ export default class ManageAccount extends React.Component {
 
   deleteAccount = (event) => {
     event.preventDefault();
-    let username = document.querySelector('#deleteUsername').value;
-    if( window.confirm("Are you sure you want to permanently delete this account?") )
+    let username = this.props.alphanumericFilter(document.querySelector('#deleteUsername').value);
+    if( username && window.confirm("Are you sure you want to permanently delete this account?") )
     {
       fetch(`/api/users/${username}`,{method:"DELETE"})
       .then( () => 

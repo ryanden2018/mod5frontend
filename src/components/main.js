@@ -18,11 +18,10 @@ class Main extends React.Component {
     .then( res => res.json() )
     .then( data => {
       if(data.status && (data.status.includes('Logged in as '))) {
-        var username = data.status.split(" ")[3];
+        var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
         this.setState({username:username});
         this.setState({socket: io(wsloc,{transports:['websocket']}) },
           () => {
-
             this.state.socket.on('disconnect', () => {
               this.setState({errMsg: "There is a problem with the connection."});
               this.props.resetEverything();
@@ -58,7 +57,7 @@ class Main extends React.Component {
               this.props.setAvailableRooms(payload.availableRooms)
             });
           });
-        fetch(`/api/users/${username}/rooms`)
+        fetch(`/api/users/${this.props.alphanumericFilter(username)}/rooms`)
         .then( res => res.json() )
         .then( rooms => {
           this.props.setAvailableRooms(rooms)
@@ -111,14 +110,14 @@ class Main extends React.Component {
   render() {
     return ( 
     <div>
-      <p>Hello, {this.state.username}!</p>
+      <p>Hello, {this.props.alphanumericFilter(this.state.username)}!</p>
       <p style={{color:"red"}}><b>{this.state.errMsg}</b></p>
       <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" style={{fontSize:"15pt"}}>Logout</button></form>
       <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" style={{fontSize:"15pt"}}>Manage Account</button></form>
-      <FileToolbar username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
-      {!!this.props.roomProperties ? <ModeToolbar socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
-      {!!this.props.roomProperties ? <FurnishingsToolbar socket={this.state.socket} colors={this.state.colors} username={this.state.username} /> : null }
-      {!!this.props.roomProperties ? <MainCanvas username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
+      <FileToolbar alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
+      {!!this.props.roomProperties ? <ModeToolbar alphanumericFilter={this.props.alphanumericFilter} socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
+      {!!this.props.roomProperties ? <FurnishingsToolbar alphanumericFilter={this.props.alphanumericFilter} socket={this.state.socket} colors={this.state.colors} username={this.state.username} /> : null }
+      {!!this.props.roomProperties ? <MainCanvas alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
     </div> );
   }
 }

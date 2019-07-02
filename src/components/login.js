@@ -19,8 +19,12 @@ export default class Login extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let username = document.querySelector("#username").value;
-    let password = document.querySelector("#password").value;
+    let username = this.props.alphanumericFilter(document.querySelector("#username").value);
+    let password = this.props.alphanumericFilter(document.querySelector("#password").value);
+    if( (!username) || (!password) ) {
+      this.setState({err:"Username and password must be alphanumeric."});
+      return;
+    }
     fetch(`/api/login`, {method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({username:username,password:password})
