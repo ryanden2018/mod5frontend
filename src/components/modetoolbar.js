@@ -6,8 +6,12 @@ import Delete from '@material-ui/icons/Delete';
 import RotateLeft from '@material-ui/icons/RotateLeft';
 import ColorLens from '@material-ui/icons/ColorLens';
 import PanTool from '@material-ui/icons/PanTool';
+import AddCircle from '@material-ui/icons/AddCircle';
+import AddModal from './addmodal';
 
 class ModeToolbar extends React.Component {
+  state = { modal : null };
+
   onMoveClick = () => {
     this.props.setMode("move")
   }
@@ -32,9 +36,18 @@ class ModeToolbar extends React.Component {
 
   render() {
     return (
-      <div>
+      <>
+      {
+        this.state.modal === "add"
+        ?
+        <AddModal cancelCallback={() => this.setState({modal:null})} okCallback={name => {this.props.addFurnishing(name,this.props.socket,this.props.colors,this.props.mode.colorName);this.setState({modal:null})}} />
+        :
+        null
+      }
+      <span>
         <FormButton style={{backgroundColor: (this.props.mode.mode === "move" ? "yellow" : "" )}} value="Move" icon={<PanTool />} handleSubmit={() => this.onMoveClick()} />
         <FormButton icon={<RotateLeft />} style={{backgroundColor: (this.props.mode.mode === "rotate" ? "yellow" : "" )}} value="Rotate" handleSubmit={() => this.onRotateClick()} />
+        <FormButton icon={<AddCircle />} handleSubmit={() => this.setState({modal:"add"})} />
         <FormButton icon={<Delete />} style={{backgroundColor: (this.props.mode.mode === "delete" ? "yellow" : "" )}} value="Delete" handleSubmit={() => this.onDeleteClick()} />
         <FormButton style={{backgroundColor: (this.props.mode.mode === "color" ? "yellow" : "" )}} value="Color" icon={<ColorLens />} handleSubmit={() => this.onColorClick()} />
         <select value={this.props.mode.colorName} onChange={this.handleColorChange}>
@@ -46,7 +59,8 @@ class ModeToolbar extends React.Component {
             )
           }
         </select>
-      </div>
+      </span>
+      </>
     );
   }
 }
@@ -60,7 +74,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setMode : mode => dispatch({type:"SET_MODE",mode:mode}),
-    setColor: colorName => dispatch({type:"SET_COLOR",colorName:colorName})
+    setColor: colorName => dispatch({type:"SET_COLOR",colorName:colorName}),
+    addFurnishing: (name,socket,colors,colorName) => dispatch( {type:"ADD_FURNISHING",name:name,socket:socket,colors:colors,colorName:colorName} )
   };
 };
 

@@ -148,14 +148,14 @@ class FileToolbar extends React.Component {
         :
         null
       }
-    <div>
+    <span>
       <FormButton value="New" icon={<Create />} handleSubmit={() => this.setState({modal:"new"})} />
       
       { this.props.availableRooms ? <FormButton value="Open" icon={<FolderOpen />} handleSubmit={() => this.setState({modal:"open"})} /> : null }
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Invite" icon={<PersonAdd />} handleSubmit={() => this.setState({modal:"invite"})} /> : null }
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Delete Room" icon={<DeleteForever />} handleSubmit={() => this.setState({modal:"delete"})} /> : null }
       { this.props.roomProperties ? <b>Current Room: {this.props.alphanumericFilter(this.props.roomProperties.name)}</b> : null } 
-    </div>
+    </span>
     </> );
   }
 }
