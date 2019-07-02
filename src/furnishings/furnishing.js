@@ -58,12 +58,30 @@ export default class Furnishing {
     return -1;
   }
 
-  renderFurnishing(renderer,camera,light,scene) {
+  dispose = () => {
+    while(this.threeDimMeshes.length > 0) {
+      var mesh = this.threeDimMeshes.pop();
+      mesh.geometry.dispose();
+      mesh.material.dispose();
+    }
+    while(this.clones.length > 0) {
+      var mesh = this.clones.pop();
+      mesh.geometry.dispose();
+      mesh.material.dispose();
+    }
+  }
+
+  renderFurnishing(renderer,camera,light,scene,garbage) {
     var rotateMat = new THREE.Matrix4();
     rotateMat.makeRotationY(this.theta);
     var translateMat = new THREE.Matrix4();
     translateMat.makeTranslation(this.posx,0,this.posz);
-    this.clones = []
+
+    while(this.clones.length > 0) {
+      var mesh = this.clones.pop();
+      garbage.push(mesh.geometry);
+      garbage.push(mesh.material);
+    }
     
     this.threeDimMeshes.forEach( mesh => {
       var cloneMesh = mesh.clone();

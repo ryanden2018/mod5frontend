@@ -23,7 +23,21 @@ function angle(x,y) {
 class MainCanvas extends React.Component {
 
   state = { cameraDispX: 0.0, cameraDispZ: 0.0, cameraRotDispY: 0.0,
-    rotatingCameraMode: false, overheadView: false }
+      rotatingCameraMode: false, overheadView: false };
+
+  constructor() {
+    super();
+    this.garbage = []; // everything in here must have a .dispose() method
+  }
+
+  tossGarbage = () => {
+    while(this.garbage.length > 0) {
+      let trash = this.garbage.pop();
+      if(trash.dispose) {
+        trash.dispose();
+      }
+    }
+  }
 
   resetCamera = () => {
     this.setState(
@@ -127,6 +141,7 @@ class MainCanvas extends React.Component {
         this.props.unLock();
     }
     this.props.unSetMouseDown();
+    this.tossGarbage();
   }
 
   componentDidMount() {
@@ -150,6 +165,10 @@ class MainCanvas extends React.Component {
   }
 
   componentWillUnmount() {
+
+    this.removeTransients();
+    this.tossGarbage();
+
     clearInterval(this.interval);
     this.interval = null;
   }
@@ -167,11 +186,52 @@ class MainCanvas extends React.Component {
     this.setState( { rotatingCameraMode: false, overheadView: true } );
   }
 
+
+  removeTransients = () => {
+    this.renderer.dispose();
+    if(this.scene) { this.scene.dispose(); }
+    if(this.floor) {
+      this.garbage.push(this.floor.geometry);
+      this.garbage.push(this.floor.material);
+      delete this.floor;
+    }
+    if(this.ceiling) {
+      this.garbage.push(this.ceiling.geometry);
+      this.garbage.push(this.ceiling.material);
+      delete this.ceiling;
+    }
+    if(this.wallLeft) {
+      this.garbage.push(this.wallLeft.geometry);
+      this.garbage.push(this.wallLeft.material);
+      delete this.wallLeft;
+    }
+    if(this.wallRight) {
+      this.garbage.push(this.wallRight.geometry);
+      this.garbage.push(this.wallRight.material);
+      delete this.wallRight;
+    }
+    if(this.wallBack) {
+      this.garbage.push(this.wallBack.geometry);
+      this.garbage.push(this.wallBack.material);
+      delete this.wallBack;
+    }
+    if(this.wallFront) {
+      this.garbage.push(this.wallFront.geometry);
+      this.garbage.push(this.wallFront.material);
+      delete this.wallFront;
+    }
+  }
+
+
   render() {
     if(this.renderer && this.light && this.camera) {
-      let scene = Furnishing.doInit(this.renderer,this.light,this.camera);
+      this.removeTransients();
+      this.tossGarbage();
+
+
+      this.scene = Furnishing.doInit(this.renderer,this.light,this.camera);
       this.props.room.forEach( furnishing => {
-        furnishing.renderFurnishing(this.renderer,this.camera,this.light,scene);
+        furnishing.renderFurnishing(this.renderer,this.camera,this.light,this.scene,this.garbage);
       });
 
       if(!this.state.overheadView) {
@@ -237,14 +297,14 @@ class MainCanvas extends React.Component {
 
 
 
-      scene.add(this.floor);
-      scene.add(this.wallLeft);
-      scene.add(this.wallRight);
-      scene.add(this.wallBack);
-      scene.add(this.ceiling);
-      scene.add(this.wallFront);
-      scene.add(this.ambientLight);
-      this.renderer.render(scene,this.camera)
+      this.scene.add(this.floor);
+      this.scene.add(this.wallLeft);
+      this.scene.add(this.wallRight);
+      this.scene.add(this.wallBack);
+      this.scene.add(this.ceiling);
+      this.scene.add(this.wallFront);
+      this.scene.add(this.ambientLight);
+      this.renderer.render(this.scene,this.camera)
     }
     return ( 
       <>
