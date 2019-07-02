@@ -91,6 +91,9 @@ class Main extends React.Component {
       clearInterval(this.roomsInterval);
       this.roomsInterval = null;
     }
+    if(this.state.socket && this.state.socket.emit) {
+      this.state.socket.emit("removeFromAllRooms");
+    }
   }
 
 
