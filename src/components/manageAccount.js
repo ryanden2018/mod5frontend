@@ -60,7 +60,7 @@ export default class ManageAccount extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{width:"100%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Return to Main" handleSubmit={() => this.props.history.push("/main")} />
         <h2>Change Password</h2>
         <form onSubmit={this.handleSubmit}>
