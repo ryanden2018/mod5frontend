@@ -112,15 +112,17 @@ class Main extends React.Component {
   render() {
     return ( 
     <div>
-      <p style={{color:"red"}}><b>{this.state.errMsg}</b></p>
-      <div>
-      <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" title="Logout"><SvgIcon><DirectionsWalk /></SvgIcon></button></form>
-      <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" title="Manage Account"><SvgIcon><AccountBox /></SvgIcon></button></form>
-      <FileToolbar alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
-      </div>
       
-      {!!this.props.roomProperties ? <ModeToolbar alphanumericFilter={this.props.alphanumericFilter} socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
-      {!!this.props.roomProperties ? <MainCanvas alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
+      <div style={{width:"100%",paddingLeft:"50px"}}>
+        <p style={{color:"red"}}><b>{this.state.errMsg}</b></p>
+        <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" title="Logout"><SvgIcon><DirectionsWalk /></SvgIcon></button></form>
+        <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" title="Manage Account"><SvgIcon><AccountBox /></SvgIcon></button></form>
+        <FileToolbar alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} />
+      </div>
+      <div style={{width:"100%",paddingLeft:"50px"}}>
+        {!!this.props.roomProperties ? <ModeToolbar alphanumericFilter={this.props.alphanumericFilter} socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
+        {!!this.props.roomProperties ? <MainCanvas alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
+      </div>
     </div> );
   }
 }

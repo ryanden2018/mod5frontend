@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import Signup from './components/signup';
 import Main from './components/main';
 import Login from './components/login';
+import NavBar from './components/navbar';
 import ManageAccount from './components/manageAccount';
 
 export default class App extends React.Component {
@@ -22,6 +23,7 @@ export default class App extends React.Component {
   render() {
     return (
       <Router>
+        <NavBar />
         <Route exact path="/" render={(props) => <Login {...props} alphanumericFilter={this.alphanumericFilter} />} />
         <Route exact path="/signup" render={(props) => <Signup {...props} alphanumericFilter={this.alphanumericFilter} />} />
         <Route exact path="/main" render={(props) => <Main {...props} alphanumericFilter={this.alphanumericFilter} />}  />
