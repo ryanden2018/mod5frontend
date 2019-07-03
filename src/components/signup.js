@@ -67,7 +67,7 @@ export default class Signup extends React.Component {
           <p>Password: <input type="password" id="password" /></p>
           <p>Confirm Password: <input type="password" id="confirmPassword" /></p>
           <p style={{color:"red"}}><b>{this.state.err}</b></p>
-          <p><button type="submit" style={{fontSize:"15pt"}}>Submit</button></p>
+          <p><button type="submit">Submit</button></p>
         </form>
       </div>
     );

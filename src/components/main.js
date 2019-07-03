@@ -15,6 +15,10 @@ class Main extends React.Component {
 
   state = { username:"", socket:null, colors:{}, errMsg: "" };
 
+  setErrMsg = msg => {
+    this.setState({errMsg: msg});
+  }
+
   componentDidMount() {
     fetch(`/api/loggedin`)
     .then( res => res.json() )
@@ -22,43 +26,7 @@ class Main extends React.Component {
       if(data.status && (data.status.includes('Logged in as '))) {
         var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
         this.setState({username:username});
-        this.setState({socket: io(wsloc,{transports:['websocket']}) },
-          () => {
-            this.state.socket.on('disconnect', () => {
-              this.setState({errMsg: "There is a problem with the connection."});
-              this.props.resetEverything();
-            });
-
-            this.state.socket.on('roomDeleted',() => {
-              this.setState({errMsg:"The room was deleted."});
-              this.state.socket.emit("removeFromAllRooms");
-              this.props.resetEverything();
-            });
-
-            this.state.socket.on("create",payload=>{
-              this.props.addFurnishingFromObject(payload.furnishing,this.state.colors)
-            });
-            this.state.socket.on("lockResponse",payload=>{
-              if(payload === "approved") {
-                this.props.setLockApproved();
-                this.props.brighten(this.props.lock.furnishingId,this.state.colors);
-              } else {
-                this.props.unLock();
-              }
-            });
-            this.state.socket.on("update", payload => {
-              this.props.addFurnishingFromObject(payload.furnishing,this.state.colors);
-            });
-            this.state.socket.on("delete", payload=>{
-              this.props.deleteFurnishing(payload.furnishingId);
-            });
-            this.state.socket.on("colorUpdate",payload=>{
-              this.props.updateColor(payload.furnishingId,payload.colorName,this.state.colors);
-            });
-            this.state.socket.on("availableRooms", payload => {
-              this.props.setAvailableRooms(payload.availableRooms)
-            });
-          });
+        this.setState({socket: io(wsloc,{transports:['websocket']}) });
         fetch(`/api/users/${this.props.alphanumericFilter(username)}/rooms`)
         .then( res => res.json() )
         .then( rooms => {
@@ -121,7 +89,7 @@ class Main extends React.Component {
       </div>
       <div style={{width:"100%",paddingLeft:"50px"}}>
         {!!this.props.roomProperties ? <ModeToolbar alphanumericFilter={this.props.alphanumericFilter} socket={this.state.socket} colors={this.state.colors} useranme={this.state.username} /> : null }
-        {!!this.props.roomProperties ? <MainCanvas alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
+        {((!!this.props.roomProperties) && (!!this.state.socket)) ? <MainCanvas setErrMsg={this.setErrMsg} alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
       </div>
     </div> );
   }

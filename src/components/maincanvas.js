@@ -148,7 +148,52 @@ class MainCanvas extends React.Component {
     this.tossGarbage();
   }
 
+  buildSocketEvents = () => {
+    this.props.socket.on('disconnect', () => {
+      this.props.setErrMsg( "There is a problem with the connection." );
+      this.props.resetEverything();
+    });
+
+    this.props.socket.on('roomDeleted',() => {
+      this.props.setErrMsg("The room was deleted.");
+      this.props.socket.emit("removeFromAllRooms");
+      this.props.resetEverything();
+    });
+
+    this.props.socket.on("create",payload=>{
+      this.props.addFurnishingFromObject(payload.furnishing,this.props.colors)
+    });
+
+    this.props.socket.on("lockResponse",payload=>{
+      if(payload === "approved") {
+        this.props.setLockApproved();
+        this.props.brighten(this.props.lock.furnishingId,this.props.colors);
+      } else {
+        this.props.unLock();
+      }
+    });
+
+    this.props.socket.on("update", payload => {
+      this.props.addFurnishingFromObject(payload.furnishing,this.props.colors);
+    });
+
+    this.props.socket.on("delete", payload=>{
+      this.props.deleteFurnishing(payload.furnishingId);
+    });
+
+    this.props.socket.on("colorUpdate",payload=>{
+      this.props.updateColor(payload.furnishingId,payload.colorName,this.props.colors);
+    });
+
+    this.props.socket.on("availableRooms", payload => {
+      this.props.setAvailableRooms(payload.availableRooms)
+    });
+  }
+
+
   componentDidMount() {
+    this.buildSocketEvents();
+
     const canvas = document.querySelector("#mc");
     this.renderer = new WebGLRenderer({canvas:canvas,physicallyCorrectLights:true});
     this.raycaster = new Raycaster();
@@ -337,6 +382,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setFurnishing : furnishingId => dispatch({type:"SET_FURNISHING",furnishingId:furnishingId}),
     unLock : () => dispatch({type:"UN_LOCK"}),
+    setLockApproved: () => dispatch({type:"SET_LOCK_APPROVED"}),
+    brighten : (furnishingId, colors) => dispatch( { type:"BRIGHTEN", furnishingId:furnishingId, colors:colors } ),
     setLockRequested: () => dispatch({type:"SET_LOCK_REQUESTED"}),
     roomDoNothing : () => dispatch({type:"ROOM_DO_NOTHING"}),
     moveX : (dx,furnishingId,colors) => dispatch({type:"MOVE_X",dx:dx,furnishingId:furnishingId,colors:colors}),
@@ -347,7 +394,12 @@ const mapDispatchToProps = dispatch => {
     dim: (furnishingId,colors) => dispatch({type:"DIM",furnishingId:furnishingId,colors:colors}),
     deleteFurnishing : (furnishingId) => dispatch({type:"DELETE_FURNISHING",furnishingId:furnishingId}),
     setMode : mode => dispatch({type:"SET_MODE",mode:mode}),
-    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors})
+    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors}),
+    resetEverything : () => { dispatch({type:"REMOVE_ALL_FURNISHINGS"}); dispatch({type:"RESET_FILE"}); dispatch({type:"LOCK_LOGOUT"}); dispatch({type:"MODE_LOGOUT"}); },
+    addFurnishingFromObject: (obj,colors) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors} ),
+    deleteFurnishing : (furnishingId) => dispatch({type:"DELETE_FURNISHING",furnishingId:furnishingId}),
+    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors}),
+    setAvailableRooms: rooms => dispatch( {type:"SET_AVAILABLE_ROOMS",rooms:rooms})
   };
 };
 
