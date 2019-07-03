@@ -1,7 +1,6 @@
 import React from 'react';
 import '../App.css';
-import FileToolbar from './filetoolbar';
-import ModeToolbar from './modetoolbar';
+import HelpModal from './helpmodal';
 import MainCanvas from './maincanvas';
 import { connect } from 'react-redux';
 import SvgIcon from '@material-ui/core/SvgIcon';
@@ -13,7 +12,7 @@ const wsloc = "ws://localhost:8000";
 
 class Main extends React.Component {
 
-  state = { username:"", socket:null, colors:{}, errMsg: null };
+  state = { username:"", socket:null, colors:{}, errMsg: null, modal: null };
 
   setErrMsg = msg => {
     this.setState({errMsg: msg});
@@ -77,8 +76,20 @@ class Main extends React.Component {
     this.props.history.push("/");
   }
 
+  openHelp = () => {
+    this.setState({modal:"help"});
+  }
+
   render() {
     return ( 
+      <>
+      {
+        (this.state.modal === "help")
+        ?
+        <HelpModal okCallback={() => this.setState({modal:null})} />
+        :
+        null
+      }
     <div>
       
       <div style={{width:"100%",paddingLeft:"50px"}}>
@@ -87,9 +98,10 @@ class Main extends React.Component {
         <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" title="Manage Account"><SvgIcon><AccountBox /></SvgIcon></button></form>
       
         
-        { (!!this.state.socket) ? <MainCanvas setErrMsg={this.setErrMsg} alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
+        { (!!this.state.socket) ? <MainCanvas openHelp={this.openHelp} setErrMsg={this.setErrMsg} alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
       </div>
-    </div> );
+    </div>
+    </> );
   }
 }
 
