@@ -19,10 +19,6 @@ Functionality
 * Additional items (e.g. vases) requiring extra coordinate
 * Stairs, rugs, carpets
 
-Performance
-* Eliminate cloning in furnishings (by storing inverse matrices)
-* Fewer render calls if possible
-
 Visualization
 * Collision detection
 * Zoom in/out

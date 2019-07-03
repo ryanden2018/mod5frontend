@@ -1,4 +1,4 @@
-import { Matrix4, Scene } from 'three';
+import { Matrix4, Scene, MeshPhongMaterial, Color } from 'three';
 
 
 function squareRoot255(val) {
@@ -15,7 +15,6 @@ export default class Furnishing {
     this.params = furnishing.params;
     this.roomId = furnishing.roomId;
     this.colorName = furnishing.colorName;
-    this.clones = []
     if(colors && colors[this.colorName]) {
       if(brighten) {
         this.red = squareRoot255(colors[this.colorName].red);
@@ -30,10 +29,37 @@ export default class Furnishing {
     this.threeDimMeshes = []; // fill out in subclasses
   }
 
+  fillColor = () => {
+    if(this.threeDimMeshes.length > 0) {
+      let texture = this.threeDimMeshes[0].material.map;
+      this.threeDimMeshes[0].material.dispose();
+      let material = new MeshPhongMaterial({map: texture, color: new Color(this.red/255,this.green/255,this.blue/255)});
+      this.threeDimMeshes.forEach( thisMesh => {
+        thisMesh.material = material;
+      });
+    }
+  }
+
   objVal() {
     let retVal = {id:this.id, type:this.type, posx:this.posx, posz:this.posz, 
       theta:this.theta, params:this.params, roomId: this.roomId, colorName: this.colorName };
     return retVal;
+  }
+
+  updateFromObject(obj,colors) {
+    this.id = obj.id;
+    this.type = obj.type;
+    this.posx = obj.posx;
+    this.posz = obj.posz;
+    this.theta = obj.theta;
+    this.params = obj.params;
+    this.roomId = obj.roomId;
+    this.colorName = obj.colorName;
+    if(colors && colors[this.colorName]) {
+      this.red = colors[this.colorName].red;
+      this.green = colors[this.colorName].green;
+      this.blue = colors[this.colorName].blue;
+    }
   }
 
   static doInit(renderer,light,camera) {
@@ -45,7 +71,7 @@ export default class Furnishing {
   }
 
   checkIntersect(raycaster) {
-    let intersections = raycaster.intersectObjects(this.clones,true);
+    let intersections = raycaster.intersectObjects(this.threeDimMeshes,true);
     if(intersections.length > 0) {
       var dist = intersections[0].distance;
       intersections.forEach( intersection => {
@@ -64,33 +90,61 @@ export default class Furnishing {
       thisMesh.geometry.dispose();
       thisMesh.material.dispose();
     }
-    while(this.clones.length > 0) {
-      var thisOtherMesh = this.clones.pop();
-      thisOtherMesh.geometry.dispose();
-      thisOtherMesh.material.dispose();
-    }
   }
 
-  renderFurnishing(renderer,camera,light,scene,garbage) {
-    var rotateMat = new Matrix4();
-    rotateMat.makeRotationY(this.theta);
-    var translateMat = new Matrix4();
-    translateMat.makeTranslation(this.posx,0,this.posz);
 
-    while(this.clones.length > 0) {
-      var thisMesh = this.clones.pop();
-      garbage.push(thisMesh.geometry);
-      garbage.push(thisMesh.material);
-    }
-    
+  moveX(diffX) {
+    let translateMat = new Matrix4();
+    translateMat.makeTranslation(diffX,0,0);
     this.threeDimMeshes.forEach( thisMesh => {
-      var cloneMesh = thisMesh.clone();
-      cloneMesh.castShadow = true;
-      cloneMesh.receiveShadow = true;
-      cloneMesh.applyMatrix(rotateMat);
-      cloneMesh.applyMatrix(translateMat);
-      scene.add(cloneMesh);
-      this.clones.push(cloneMesh);
+      thisMesh.applyMatrix(translateMat);
+    });
+    this.posx += diffX;
+  }
+
+  moveZ(diffZ) {
+    let translateMat = new Matrix4();
+    translateMat.makeTranslation(0,0,diffZ);
+    this.threeDimMeshes.forEach( thisMesh => {
+      thisMesh.applyMatrix(translateMat);
+    });
+    this.posz += diffZ;
+  }
+
+  moveTheta(diffTheta) {
+    let invTranslateMat = new Matrix4();
+    let translateMat = new Matrix4();
+    let rotateMat = new Matrix4();
+    translateMat.makeTranslation(this.posx,0,this.posz);
+    invTranslateMat.makeTranslation(-this.posx,0,-this.posz);
+    rotateMat.makeRotationY(diffTheta);
+    this.threeDimMeshes.forEach( thisMesh => {
+      thisMesh.applyMatrix(invTranslateMat);
+      thisMesh.applyMatrix(rotateMat);
+      thisMesh.applyMatrix(translateMat);
+    });
+    this.theta += diffTheta;
+  }
+
+
+  removeFrom = (scene) => {
+    this.threeDimMeshes.forEach( thisMesh => {
+      scene.remove(thisMesh);
+    });
+  }
+
+  renderFurnishing(renderer,camera,scene) {
+    let rotateMat = new Matrix4();
+    rotateMat.makeRotationY(this.theta);
+    let translateMat = new Matrix4();
+    translateMat.makeTranslation(this.posx,0,this.posz);
+  
+    this.threeDimMeshes.forEach( thisMesh => {
+      thisMesh.castShadow = true;
+      thisMesh.receiveShadow = true;
+      thisMesh.applyMatrix(rotateMat);
+      thisMesh.applyMatrix(translateMat);
+      scene.add(thisMesh);
     });
 
     renderer.render(scene,camera);

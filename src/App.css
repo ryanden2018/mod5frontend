@@ -8,12 +8,14 @@
   pointer-events: none;
 }
 
+
 input {
   font-size: 15pt;
   box-shadow: 1px 1px 2px gray;
   border-style: solid;
   border-radius: 20px;
-  padding: 2px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   padding-left:20px;
   padding-right:20px;
   margin: 2px;
@@ -24,12 +26,11 @@ input {
 
 
 select {
-  font-size: 15pt;
+  font-size: 20pt;
   background-color: #ff9d00;
   border-radius: 20px;
   border-style: none;
   box-shadow: 1px 1px 2px gray;
-  padding: 20px;
   margin:2px;
 }
 
@@ -45,8 +46,10 @@ button {
   background-color: #ff9d00;
   box-shadow: 1px 1px 2px gray;
   font-size: 15pt;
-  padding-left:10px;
-  padding-right:10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
   margin:2px;
   border-radius:20px;
   border-style:none;

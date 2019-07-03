@@ -40,7 +40,7 @@ class ModeToolbar extends React.Component {
       {
         this.state.modal === "add"
         ?
-        <AddModal cancelCallback={() => this.setState({modal:null})} okCallback={name => {this.props.addFurnishing(name,this.props.socket,this.props.colors,this.props.mode.colorName);this.setState({modal:null})}} />
+        <AddModal cancelCallback={() => this.setState({modal:null})} okCallback={name => {this.props.addFurnishing(name,this.props.socket,this.props.colors,this.props.mode.colorName,this.props.renderer(),this.props.camera(),this.props.scene());this.setState({modal:null})}} />
         :
         null
       }
@@ -75,7 +75,7 @@ const mapDispatchToProps = dispatch => {
   return {
     setMode : mode => dispatch({type:"SET_MODE",mode:mode}),
     setColor: colorName => dispatch({type:"SET_COLOR",colorName:colorName}),
-    addFurnishing: (name,socket,colors,colorName) => dispatch( {type:"ADD_FURNISHING",name:name,socket:socket,colors:colors,colorName:colorName} )
+    addFurnishing: (name,socket,colors,colorName,renderer,camera,scene) => dispatch( {type:"ADD_FURNISHING",name:name,socket:socket,colors:colors,colorName:colorName,renderer:renderer,camera:camera,scene:scene} )
   };
 };
 

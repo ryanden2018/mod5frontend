@@ -20,70 +20,7 @@ class FileToolbar extends React.Component {
     this.setState({modal:"error",errMsg:msg});
   }
 
-  newRoom = (roomName,roomSize) => {
-    this.setState({modal:null});
-    let name = this.props.alphanumericFilter(roomName)
-    let size = this.props.alphanumericFilter(roomSize)
-    if(name && size && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
-      fetch(`/api/rooms`, { method:"POST",
-        headers: {"Content-type":"application/json"},
-        body: JSON.stringify( {room:{name:name,length:parseInt(size)+3,width:parseInt(size)+3,height:4}} ) }
-      ).then( res => res.json() )
-      .then( data => {
-        if(!data.error) {
-          this.props.setIsOwner(true);
-          this.props.setRoomProperties(data);
-          this.props.removeAllFurnishings();
-          this.props.socket.emit("join",{roomId:data.id});
-        } else {
-          this.setError("Could not create room");
-        }
-      })
-      .catch( () => this.setError("Could not create room") );
-    } else {
-      this.setError("Could not create room");
-    }
-  }
 
-  openRoom = (inputVal) => {
-    this.setState({modal:null});
-    let roomId = parseInt(inputVal);
-    if(roomId !== -1) {
-      fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}`)
-      .then( res => res.json() )
-      .then( room => {
-        this.props.setRoomProperties(room);
-        fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}/furnishings`)
-        .then(res => res.json() )
-        .then( furnishings => {
-          if(!furnishings.error) {
-            this.props.removeAllFurnishings();
-            Object.keys(furnishings).forEach(
-              key => {
-                this.props.addFurnishingFromObject(furnishings[key],this.props.colors);
-              }
-            );
-            this.props.socket.emit("join",{roomId:roomId});
-
-            fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}/isOwner`)
-            .then(res=>res.json())
-            .then( results => {
-              if(results.status) {
-                this.props.setIsOwner(true);
-              } else {
-                this.props.setIsOwner(false);
-              }
-            }).catch( () => { } );
-
-
-          } else {
-            this.setError("Could not open room")
-          } 
-        }).catch( () => this.setError("Could not open room") );
-      }).catch( () => this.setError("Could not open room") );
-    
-    }
-  }
 
 
   inviteToRoom = (inputVal) => {
@@ -105,7 +42,7 @@ class FileToolbar extends React.Component {
     .then( () => { 
       this.props.socket.emit("roomDeleted");
       this.props.resetFile();
-      this.props.removeAllFurnishings();
+      this.props.disposeAllFurnishings(true);
     } )
     .catch( () => { this.setError("Error deleting room") } )
   }
@@ -116,7 +53,7 @@ class FileToolbar extends React.Component {
       {
         this.state.modal === "new"
         ?
-        <NewModal okCallback={this.newRoom} cancelCallback={() => this.setState({modal:null})} />
+        <NewModal okCallback={(roomName,roomSize) => {this.setState({modal:null});this.props.newRoom(roomName,roomSize);}} cancelCallback={() => this.setState({modal:null})} />
         :
         null
       }
@@ -130,7 +67,7 @@ class FileToolbar extends React.Component {
       {
         this.state.modal === "open"
         ?
-        <OpenModal alphanumericFilter={this.props.alphanumericFilter} availableRooms={this.props.availableRooms || {}} okCallback={this.openRoom} cancelCallback={() => this.setState({modal:null})} />
+        <OpenModal alphanumericFilter={this.props.alphanumericFilter} availableRooms={this.props.availableRooms || {}} okCallback={(inputVal) => {this.setState({modal:null});this.props.openRoom(inputVal);}} cancelCallback={() => this.setState({modal:null})} />
         :
         null
       }
@@ -154,7 +91,7 @@ class FileToolbar extends React.Component {
       { this.props.availableRooms ? <FormButton value="Open" icon={<FolderOpen />} handleSubmit={() => this.setState({modal:"open"})} /> : null }
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Invite" icon={<PersonAdd />} handleSubmit={() => this.setState({modal:"invite"})} /> : null }
       { this.props.roomProperties && this.props.amOwner ? <FormButton value="Delete Room" icon={<DeleteForever />} handleSubmit={() => this.setState({modal:"delete"})} /> : null }
-      { this.props.roomProperties ? <b>Current Room: {this.props.alphanumericFilter(this.props.roomProperties.name)}</b> : null } 
+      
     </span>
     </> );
   }
@@ -170,7 +107,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addFurnishingFromObject: (obj,colors) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors} ),
+    addFurnishingFromObject: (obj,colors,renderer,camera,scene) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors,renderer:renderer,camera:camera,scene:scene} ),
     setIsOwner: (val) => dispatch({type:"SET_IS_OWNER",val:val}),
     setRoomProperties: (roomProperties) => dispatch({type:"SET_ROOM_PROPERTIES",roomProperties:roomProperties}),
     removeAllFurnishings: () => dispatch({type:"REMOVE_ALL_FURNISHINGS"}),

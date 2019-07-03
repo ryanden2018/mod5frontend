@@ -1,7 +1,9 @@
 import React from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
-import { DoubleSide,Mesh,PlaneGeometry,MeshPhongMaterial,Vector2,WebGLRenderer,Raycaster,PCFSoftShadowMap,PerspectiveCamera,PointLight,AmbientLight } from 'three';
+import ModeToolbar from './modetoolbar';
+import FileToolbar from './filetoolbar';
+import { Scene, Color, DoubleSide,Mesh,PlaneGeometry,MeshPhongMaterial,Vector2,WebGLRenderer,Raycaster,PCFSoftShadowMap,PerspectiveCamera,PointLight,AmbientLight } from 'three';
 import FormButton from './formbutton';
 import Furnishing from '../furnishings/furnishing';
 import ThreeSixty from '@material-ui/icons/ThreeSixty';
@@ -27,7 +29,7 @@ function angle(x,y) {
 class MainCanvas extends React.Component {
 
   state = { cameraDispX: 0.0, cameraDispZ: 0.0, cameraRotDispY: 0.0,
-      rotatingCameraMode: false, overheadView: false };
+      rotatingCameraMode: false, overheadView: false, roomId: null };
 
   constructor() {
     super();
@@ -43,13 +45,123 @@ class MainCanvas extends React.Component {
     }
   }
 
+  openRoom = (inputVal) => {
+    let roomId = parseInt(inputVal);
+    if(roomId !== -1) {
+      fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}`)
+      .then( res => res.json() )
+      .then( room => {
+        this.props.setRoomProperties(room);
+        this.rebuildRoom();
+        fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}/furnishings`)
+        .then(res => res.json() )
+        .then( furnishings => {
+          if(!furnishings.error) {
+            this.props.removeAllFurnishings();
+            Object.keys(furnishings).forEach(
+              key => {
+                this.props.addFurnishingFromObject(furnishings[key],this.props.colors,this.renderer,this.camera,this.scene);
+              }
+            );
+            this.props.socket.emit("join",{roomId:roomId});
+
+            fetch(`/api/rooms/${this.props.alphanumericFilter(roomId)}/isOwner`)
+            .then(res=>res.json())
+            .then( results => {
+              if(results.status) {
+                this.props.setIsOwner(true);
+              } else {
+                this.props.setIsOwner(false);
+              }
+            }).catch( () => { } );
+
+            this.props.setErrMsg("");
+            this.setState({roomId: roomId});
+
+
+          } else {
+            this.props.setErrMsg("Could not open room");
+            this.disposeAllFurnishings(true);
+            this.props.resetEverything();
+          } 
+        }).catch( () => {
+          this.props.setErrMsg("Could not open room");
+          this.disposeAllFurnishings(true);
+          this.props.resetEverything();
+        });
+      }).catch( () => {
+         this.props.setErrMsg("Could not open room");
+         this.disposeAllFurnishings(true);
+         this.props.resetEverything();
+      });
+    
+    }
+  }
+
+
+  newRoom = (roomName,roomSize) => {
+    let name = this.props.alphanumericFilter(roomName)
+    let size = this.props.alphanumericFilter(roomSize)
+    if(name && size && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
+      fetch(`/api/rooms`, { method:"POST",
+        headers: {"Content-type":"application/json"},
+        body: JSON.stringify( {room:{name:name,length:parseInt(size)+3,width:parseInt(size)+3,height:4}} ) }
+      ).then( res => res.json() )
+      .then( data => {
+        if(!data.error) {
+          this.props.setIsOwner(true);
+          this.props.setRoomProperties(data);
+          this.rebuildRoom();
+          this.props.socket.emit("join",{roomId:data.id});
+          this.setState({roomId: data.id});
+        } else {
+          this.setError("Could not create room");
+        }
+      })
+      .catch( () => this.setError("Could not create room") );
+    } else {
+      this.setError("Could not create room");
+    }
+  }
+
+
+
+
   resetCamera = () => {
     this.setState(
       { cameraDispX: 0.0, cameraDispZ: 0.0, cameraRotDispY: 0.0, 
-        rotatingCameraMode: false, overheadView: false }
+        rotatingCameraMode: false, overheadView: false },
+        () => {
+          this.camera.position.x = 0.0 + this.state.cameraDispX;
+          this.camera.position.y =  this.props.roomProperties.height * 0.5;
+          this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
+          this.camera.rotation.x = 0.0;
+          this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+          this.camera.rotation.z = 0.0;
+          this.renderer.render(this.scene,this.camera);
+        }
     );
+    
   }
 
+  moveX = (diffX, furnishingId) => {
+    var furnishing = this.props.room.find( furnishing => furnishing.id === furnishingId );
+    furnishing.moveX(diffX);
+    this.renderer.render(this.scene,this.camera);
+  }
+
+
+  moveZ = (diffZ, furnishingId) => {
+    var furnishing = this.props.room.find( furnishing => furnishing.id === furnishingId );
+    furnishing.moveZ(diffZ);
+    this.renderer.render(this.scene,this.camera);
+  }
+
+  moveTheta = (diffTheta, furnishingId) => {
+    var furnishing = this.props.room.find( furnishing => furnishing.id === furnishingId );
+    furnishing.moveTheta(diffTheta);
+    this.renderer.render(this.scene,this.camera);
+  }
 
   handleMouseMove = event => {
     event.preventDefault();
@@ -59,11 +171,17 @@ class MainCanvas extends React.Component {
           let a = this.props.roomProperties.width*event.movementX/width;
           let b = this.props.roomProperties.length*event.movementY/height;
           let theta = this.state.cameraRotDispY;
-          this.props.moveX(a*Math.cos(theta)+b*Math.sin(theta), this.props.lock.furnishingId, this.props.colors);
-          this.props.moveZ(-1*a*Math.sin(theta)+b*Math.cos(theta), this.props.lock.furnishingId, this.props.colors);
+          let diffX = a*Math.cos(theta)+b*Math.sin(theta);
+          let diffZ = -1*a*Math.sin(theta)+b*Math.cos(theta);
+          this.moveX(diffX, this.props.lock.furnishingId);
+          this.moveZ(diffZ, this.props.lock.furnishingId);
+          this.props.socket.emit("mouseMoved", {furnishingId: this.props.lock.furnishingId, diffX:diffX, diffZ:diffZ, diffTheta:0.0});
         } else {
-          this.props.moveX(this.props.roomProperties.width*event.movementX/width, this.props.lock.furnishingId, this.props.colors);
-          this.props.moveZ(this.props.roomProperties.length*event.movementY/height, this.props.lock.furnishingId, this.props.colors);
+          let diffX = this.props.roomProperties.width*event.movementX/width;
+          let diffZ = this.props.roomProperties.length*event.movementY/height
+          this.moveX(diffX, this.props.lock.furnishingId);
+          this.moveZ(diffZ, this.props.lock.furnishingId);
+          this.props.socket.emit("mouseMoved", {furnishingId: this.props.lock.furnishingId, diffX:diffX, diffZ:diffZ, diffTheta:0.0});
         }
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
@@ -77,24 +195,40 @@ class MainCanvas extends React.Component {
           let theta1 = angle(diffx,diffy);
           let theta2 = angle(diffx+dx,diffy-dy);
           if(Math.abs(theta1-theta2) < Math.PI) {
-            this.props.moveTheta( 3*(theta2-theta1), this.props.lock.furnishingId, this.props.colors );
+            let diffTheta = 3*(theta2-theta1);
+            this.moveTheta( diffTheta, this.props.lock.furnishingId );
+            this.props.socket.emit("mouseMoved", {furnishingId: this.props.lock.furnishingId, diffX:0.0, diffZ:0.0, diffTheta:diffTheta})
           }
         }
       }
-
-      this.props.socket.emit("mouseMoved",{furnishing:
-        this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
     } else if ( this.props.lock.mouseDown ) {
-      if( !this.state.rotatingCameraMode ) {
+      if( (!this.state.rotatingCameraMode) && (!this.state.overheadView) ) {
         let a = -this.props.roomProperties.width*event.movementX/width;
         let b = -this.props.roomProperties.length*event.movementY/height;
         let theta = this.state.cameraRotDispY;
         this.setState({
           cameraDispX: this.state.cameraDispX + a*Math.cos(theta) + b*Math.sin(theta),
-          cameraDispZ: this.state.cameraDispZ - a*Math.sin(theta) + b*Math.cos(theta) } )
-      } else {
+          cameraDispZ: this.state.cameraDispZ - a*Math.sin(theta) + b*Math.cos(theta) },
+          () => {
+            this.camera.position.x = 0.0 + this.state.cameraDispX;
+            this.camera.position.y =  this.props.roomProperties.height * 0.5;
+            this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
+            this.camera.rotation.x = 0.0;
+            this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+            this.camera.rotation.z = 0.0;
+            this.renderer.render(this.scene,this.camera);
+           } )
+      } else if (!this.state.overheadView) {
         this.setState({
           cameraRotDispY: this.state.cameraRotDispY + 5*event.movementX/width
+        }, () => {
+          this.camera.position.x = 0.0 + this.state.cameraDispX;
+          this.camera.position.y =  this.props.roomProperties.height * 0.5;
+          this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
+          this.camera.rotation.x = 0.0;
+          this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+          this.camera.rotation.z = 0.0;
+          this.renderer.render(this.scene,this.camera);
         });
       }
     }
@@ -125,12 +259,19 @@ class MainCanvas extends React.Component {
         this.props.setLockRequested();
         this.props.setFurnishing(furnishing.id);
       } else if (this.props.mode.mode === "color") {
-        this.props.updateColor(furnishing.id,this.props.mode.colorName,this.props.colors);
+        furnishing.colorName = this.props.mode.colorName;
+        furnishing.red = this.props.colors[this.props.mode.colorName].red;
+        furnishing.green = this.props.colors[this.props.mode.colorName].green;
+        furnishing.blue = this.props.colors[this.props.mode.colorName].blue;
+        furnishing.fillColor();
+        this.renderer.render(this.scene,this.camera);
         this.props.socket.emit("updateColor",{furnishingId:furnishing.id,colorName:this.props.mode.colorName});
         this.props.setMode("move");
       } else if (this.props.mode.mode === "delete") {
         this.props.socket.emit("deleteFurnishing",{furnishingId:furnishing.id});
+        furnishing.removeFrom(this.scene);
         this.props.deleteFurnishing(furnishing.id);
+        this.renderer.render(this.scene,this.camera);
         this.props.setMode("move");
       }
     }
@@ -148,7 +289,87 @@ class MainCanvas extends React.Component {
     this.tossGarbage();
   }
 
+  buildSocketEvents = () => {
+    this.props.socket.on('disconnect', () => {
+      this.props.setErrMsg( "There is a problem with the connection." );
+      this.disposeAllFurnishings(true);
+      this.props.resetEverything();
+    });
+
+    this.props.socket.on('reconnect',() => {
+      this.props.setErrMsg("");
+      this.openRoom(this.state.roomId);
+    });
+
+    this.props.socket.on('roomDeleted',() => {
+      this.props.setErrMsg("The room was deleted.");
+      this.props.socket.emit("removeFromAllRooms");
+      this.disposeAllFurnishings(true);
+      this.props.resetEverything();
+    });
+
+    this.props.socket.on("create",payload=>{
+      this.props.addFurnishingFromObject(payload.furnishing,this.props.colors,this.renderer,this.camera,this.scene)
+    });
+
+    this.props.socket.on("lockResponse",payload=>{
+      if(payload === "approved") {
+        this.props.setLockApproved();
+        this.props.brighten(this.props.lock.furnishingId,this.props.colors);
+      } else {
+        this.props.unLock();
+      }
+    });
+
+    this.props.socket.on("update", payload => {
+      let furnishing = this.props.room.find( furnishing => furnishing.id === payload.furnishing.id );
+      if(furnishing) {
+        furnishing.updateFromObject(payload.furnishing,this.props.colors);
+        this.renderer.render(this.scene,this.camera);
+      }
+    });
+
+    this.props.socket.on("delete", payload=>{
+      let furnishing = this.props.room.find( furnishing => furnishing.id === payload.furnishingId);
+      if(furnishing) {
+        furnishing.removeFrom(this.scene);
+        this.props.deleteFurnishing(payload.furnishingId);
+        this.renderer.render(this.scene,this.camera);
+      }
+    });
+
+    this.props.socket.on("colorUpdate",payload=>{
+      let furnishing = this.props.room.find( furnishing => furnishing.id === payload.furnishingId );
+      if(furnishing) {
+        furnishing.colorName = payload.colorName;
+        furnishing.red = this.props.colors[payload.colorName].red;
+        furnishing.green = this.props.colors[payload.colorName].green;
+        furnishing.blue = this.props.colors[payload.colorName].blue;
+        furnishing.fillColor();
+        this.renderer.render(this.scene,this.camera);
+      }
+    });
+
+    this.props.socket.on("availableRooms", payload => {
+      this.props.setAvailableRooms(payload.availableRooms)
+    });
+
+    this.props.socket.on("mouseMoved",payload => {
+      let furnishing = this.props.room.find( furnishing => furnishing.id === payload.furnishingId );
+      if(furnishing) {
+        furnishing.moveX(payload.diffX);
+        furnishing.moveZ(payload.diffZ);
+        furnishing.moveTheta(payload.diffTheta);
+        this.renderer.render(this.scene,this.camera);
+      }
+    });
+  }
+
+
+
   componentDidMount() {
+    this.buildSocketEvents();
+
     const canvas = document.querySelector("#mc");
     this.renderer = new WebGLRenderer({canvas:canvas,physicallyCorrectLights:true});
     this.raycaster = new Raycaster();
@@ -158,6 +379,10 @@ class MainCanvas extends React.Component {
     this.light = new PointLight(0xFFFFFF,1,100);
     this.light.decay = 2;
     this.ambientLight = new AmbientLight( 0x404040 );
+    this.scene = new Scene();
+    this.scene.background = new Color(0xffffff);
+    this.renderer.render(this.scene,this.camera);
+    
 
     this.interval = setInterval(
       () => {
@@ -168,10 +393,30 @@ class MainCanvas extends React.Component {
     , 1000);
   }
 
+
+  disposeAllFurnishings = (reRender) => {
+    if(this.props.room) {
+      for(let i = 0; i < this.props.room.length; i++) {
+        let furnishing = this.props.room[i];
+        furnishing.removeFrom(this.scene);
+      }
+      this.props.removeAllFurnishings();
+      if(reRender) {
+        this.scene.dispose();
+        this.scene = new Scene();
+        this.scene.background = new Color(0xffffff);
+        this.renderer.render(this.scene,this.camera);
+      }
+    }
+  }
+
+
   componentWillUnmount() {
+    this.disposeAllFurnishings();
 
     this.removeTransients();
     this.tossGarbage();
+    this.props.resetEverything();
 
     clearInterval(this.interval);
     this.interval = null;
@@ -180,19 +425,39 @@ class MainCanvas extends React.Component {
 
   handleMoveCamera = () => {
     this.setState( { rotatingCameraMode: false, overheadView: false } )
+    this.camera.position.x = 0.0 + this.state.cameraDispX;
+    this.camera.position.y =  this.props.roomProperties.height * 0.5;
+    this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
+    this.camera.rotation.x = 0.0;
+    this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+    this.camera.rotation.z = 0.0;
+    this.renderer.render(this.scene,this.camera);
   }
 
   handleRotateCamera = () => {
     this.setState( { rotatingCameraMode: true, overheadView: false } )
+    this.camera.position.x = 0.0 + this.state.cameraDispX;
+    this.camera.position.y =  this.props.roomProperties.height * 0.5;
+    this.camera.position.z = 0.9*this.props.roomProperties.width/2+ this.state.cameraDispZ;
+    this.camera.rotation.x = 0.0;
+    this.camera.rotation.y = 0.0 + this.state.cameraRotDispY;
+    this.camera.rotation.z = 0.0;
+    this.renderer.render(this.scene,this.camera);
   }
 
   handleOverhead = () => {
     this.setState( { rotatingCameraMode: false, overheadView: true } );
+    this.camera.position.x = 0.0;
+    this.camera.position.y = this.props.roomProperties.width*0.95;
+    this.camera.position.z = 0.0;
+    this.camera.rotation.x = -Math.PI/2;
+    this.camera.rotation.y = 0.0;
+    this.camera.rotation.z = 0.0;
+    this.renderer.render(this.scene,this.camera);
   }
 
 
   removeTransients = () => {
-    this.renderer.dispose();
     if(this.scene) { this.scene.dispose(); }
     if(this.floor) {
       this.garbage.push(this.floor.geometry);
@@ -227,16 +492,14 @@ class MainCanvas extends React.Component {
   }
 
 
-  render() {
+  rebuildRoom = () => {
     if(this.renderer && this.light && this.camera) {
       this.removeTransients();
       this.tossGarbage();
+      this.disposeAllFurnishings();
 
 
       this.scene = Furnishing.doInit(this.renderer,this.light,this.camera);
-      this.props.room.forEach( furnishing => {
-        furnishing.renderFurnishing(this.renderer,this.camera,this.light,this.scene,this.garbage);
-      });
 
       if(!this.state.overheadView) {
         this.camera.position.x = 0.0 + this.state.cameraDispX;
@@ -310,12 +573,24 @@ class MainCanvas extends React.Component {
       this.scene.add(this.ambientLight);
       this.renderer.render(this.scene,this.camera)
     }
+  }
+
+
+  render() {
+    if(this.renderer && this.scene && this.camera) {
+      this.renderer.render(this.scene,this.camera);
+    }
+
     return ( 
       <>
-        <FormButton icon={<CameraAlt />} value="Reset Camera" handleSubmit={this.resetCamera} />
-        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode || this.state.overheadView) ? "white" : "yellow")}} icon={<CenterFocusStrong />} value="Move Camera" handleSubmit={this.handleMoveCamera} />
-        <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} />
-        <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" icon={<BorderOuter />} handleSubmit={this.handleOverhead} />
+      <FileToolbar newRoom={this.newRoom} openRoom={this.openRoom} disposeAllFurnishings={this.disposeAllFurnishings} rebuildRoom={this.rebuildRoom} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} username={this.props.username} colors={this.props.colors} socket={this.props.socket} />
+      <div>
+        {(!!this.props.roomProperties) ? <ModeToolbar renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} socket={this.props.socket} colors={this.props.colors} username={this.props.username} /> : null }
+        {(!!this.props.roomProperties) ? <FormButton icon={<CameraAlt />} value="Reset Camera" handleSubmit={this.resetCamera} /> : null }
+        {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode || this.state.overheadView) ? "white" : "yellow")}} icon={<CenterFocusStrong />} value="Move Camera" handleSubmit={this.handleMoveCamera} /> : null }
+        {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} /> : null }
+        {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" icon={<BorderOuter />} handleSubmit={this.handleOverhead} /> : null }
+      </div> 
         <div width={width} height={height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
           <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
         </div>
@@ -337,6 +612,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setFurnishing : furnishingId => dispatch({type:"SET_FURNISHING",furnishingId:furnishingId}),
     unLock : () => dispatch({type:"UN_LOCK"}),
+    setLockApproved: () => dispatch({type:"SET_LOCK_APPROVED"}),
+    brighten : (furnishingId, colors) => dispatch( { type:"BRIGHTEN", furnishingId:furnishingId, colors:colors } ),
     setLockRequested: () => dispatch({type:"SET_LOCK_REQUESTED"}),
     roomDoNothing : () => dispatch({type:"ROOM_DO_NOTHING"}),
     moveX : (dx,furnishingId,colors) => dispatch({type:"MOVE_X",dx:dx,furnishingId:furnishingId,colors:colors}),
@@ -345,9 +622,15 @@ const mapDispatchToProps = dispatch => {
     setMouseDown : (mousex,mousey) => dispatch({type:"SET_MOUSE_DOWN",mousex:mousex,mousey:mousey}),
     unSetMouseDown : () => dispatch({type:"UN_SET_MOUSE_DOWN"}),
     dim: (furnishingId,colors) => dispatch({type:"DIM",furnishingId:furnishingId,colors:colors}),
-    deleteFurnishing : (furnishingId) => dispatch({type:"DELETE_FURNISHING",furnishingId:furnishingId}),
     setMode : mode => dispatch({type:"SET_MODE",mode:mode}),
-    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors})
+    resetEverything : () => { dispatch({type:"REMOVE_ALL_FURNISHINGS"}); dispatch({type:"RESET_FILE"}); dispatch({type:"LOCK_LOGOUT"}); dispatch({type:"MODE_LOGOUT"}); },
+    removeAllFurnishings : () => { dispatch({type:"REMOVE_ALL_FURNISHINGS"}) },
+    addFurnishingFromObject: (obj,colors,renderer,camera,scene) => dispatch( {type:"ADD_FURNISHING_FROM_OBJECT",obj:obj,colors:colors,renderer:renderer,camera:camera,scene:scene} ),
+    deleteFurnishing : (furnishingId) => dispatch({type:"DELETE_FURNISHING",furnishingId:furnishingId}),
+    updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors}),
+    setAvailableRooms: rooms => dispatch( {type:"SET_AVAILABLE_ROOMS",rooms:rooms}),
+    setRoomProperties: (roomProperties) => dispatch({type:"SET_ROOM_PROPERTIES",roomProperties:roomProperties}),
+    setIsOwner: (val) => dispatch({type:"SET_IS_OWNER",val:val})
   };
 };
 
