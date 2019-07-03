@@ -1,5 +1,6 @@
 import Furnishing from "./furnishing"
-import * as THREE from 'three';
+import { MeshPhongMaterial, Color, BoxGeometry, CylinderGeometry, Mesh } from 'three';
+import linesTexture from './linestexture';
 
 export default class NightStand extends Furnishing {
   clone(colors,brighten=false) {
@@ -11,27 +12,27 @@ export default class NightStand extends Furnishing {
     super(furnishing,colors,brighten);
     let scale = 1.5;
 
-    const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({bumpMap: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
     
-    const cube = new THREE.Mesh( new THREE.BoxGeometry(0.3*scale,0.4*scale,0.3*scale),material);
+    const cube = new Mesh( new BoxGeometry(0.3*scale,0.4*scale,0.3*scale),material);
     cube.position.set(0.0,-0.1*scale+1.0*scale,0.0)
 
-    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
+    let cylinder1 = new Mesh( new CylinderGeometry( 0.02*scale,0.02*scale,0.9*scale,25 ),
       material ) 
-    cylinder1.position.set(-0.13*scale,-0.5*scale+1*scale,0.13*scale)
+    cylinder1.position.set(-0.13*scale,0.25*scale,0.13*scale)
     
-    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
+    let cylinder2 = new Mesh( new CylinderGeometry( 0.02*scale,0.02*scale,0.9*scale,25 ),
       material ) 
-    cylinder2.position.set(0.13*scale,-0.5*scale+1*scale,0.13*scale)
+    cylinder2.position.set(0.13*scale,0.25*scale,0.13*scale)
     
-    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
+    let cylinder3 = new Mesh( new CylinderGeometry( 0.02*scale,0.02*scale,0.9*scale,25 ),
       material ) 
-    cylinder3.position.set(-0.13*scale,-0.5*scale+1*scale,-0.13*scale)
+    cylinder3.position.set(-0.13*scale,0.25*scale,-0.13*scale)
 
     
-    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.02*scale,0.02*scale,0.8*scale,25 ),
+    let cylinder4 = new Mesh( new CylinderGeometry( 0.02*scale,0.02*scale,0.9*scale,25 ),
       material )
-    cylinder4.position.set(0.13*scale,-0.5*scale+1*scale,-0.13*scale)
+    cylinder4.position.set(0.13*scale,0.25*scale,-0.13*scale)
 
     
     this.threeDimMeshes.push(cube);

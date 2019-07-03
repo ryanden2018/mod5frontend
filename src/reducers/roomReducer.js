@@ -1,4 +1,3 @@
-import Furnishing from '../furnishings/furnishing';
 import Table from '../furnishings/table';
 import LongTable from '../furnishings/longtable';
 import Stool from '../furnishings/stool';
@@ -111,9 +110,9 @@ export default function roomReducer(state = [], action) {
       }
       break;
     case 'DELETE_FURNISHING':
-      var furnishingToDelete = state.find( furnishing => furnishing.id === action.furnishingId );
-      if(furnishingToDelete) {
-        furnishingToDelete.dispose();
+      var anotherFurnishingToDelete = state.find( furnishing => furnishing.id === action.furnishingId );
+      if(anotherFurnishingToDelete) {
+        anotherFurnishingToDelete.dispose();
       }
       return state.filter( furnishing => furnishing.id !== action.furnishingId );
     case 'ROOM_LOGOUT':
@@ -132,8 +131,8 @@ export default function roomReducer(state = [], action) {
         return state;
       }
     case 'REMOVE_ALL_FURNISHINGS':
-      for(var i = 0; i < state.length; i++) {
-        state[i].dispose();
+      for(var j = 0; j < state.length; j++) {
+        state[j].dispose();
       }
       return []
     case 'MOVE_X':
