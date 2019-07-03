@@ -1,5 +1,6 @@
 import Furnishing from "./furnishing"
-import * as THREE from 'three';
+import { MeshPhongMaterial, Color, BoxGeometry, CylinderGeometry, Mesh } from 'three';
+import linesTexture from './linestexture';
 
 export default class LongTable extends Furnishing {
   clone(colors,brighten = false) {
@@ -9,32 +10,32 @@ export default class LongTable extends Furnishing {
   constructor(furnishing,colors,brighten = false) {
     super(furnishing,colors,brighten);
 
-    const material = new THREE.MeshPhongMaterial({color: new THREE.Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({map: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
     
     let scale = 1.35;
 
-    const cube = new THREE.Mesh( new THREE.BoxGeometry(3*scale,0.1*scale,1*scale),material);
+    const cube = new Mesh( new BoxGeometry(3*scale,0.1*scale,1*scale),material);
     cube.position.set(0.0,-0.1*scale+1*scale,0.0)
 
-    let cylinder1 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
+    let cylinder1 = new Mesh( new CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material ) 
     cylinder1.position.set(-1.5*scale,-0.5*scale+1*scale,0.5*scale)
     cylinder1.rotation.x = -0.25
     cylinder1.rotation.z = -0.25
     
-    let cylinder2 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
+    let cylinder2 = new Mesh( new CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material ) 
     cylinder2.position.set(1.5*scale,-0.5*scale+1*scale,0.5*scale)
     cylinder2.rotation.x = -0.25
     cylinder2.rotation.z = 0.25
 
-    let cylinder3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
+    let cylinder3 = new Mesh( new CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material ) 
     cylinder3.position.set(-1.5*scale,-0.5*scale+1*scale,-0.5*scale)
     cylinder3.rotation.x = 0.25
     cylinder3.rotation.z = -0.25
     
-    let cylinder4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
+    let cylinder4 = new Mesh( new CylinderGeometry( 0.1*scale,0.1*scale,0.8*scale,25 ),
       material )
     cylinder4.position.set(1.5*scale,-0.5*scale+1*scale,-0.5*scale)
     cylinder4.rotation.x = 0.25

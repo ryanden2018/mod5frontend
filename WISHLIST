@@ -1,0 +1,30 @@
+Standard
+* Undo/Redo
+* Save As... (make copy under new name)
+* Password recovery via email
+
+Graphics
+* Better textures
+* Rounding of edges
+* Better shadows
+
+Functionality
+* Wallpaper
+* Doors, windows, entryway
+* Physical units (e.g. feet)
+* Separate width from length
+* Different room shapes (e.g. circular, or corner cut off, etc)
+* Add/move light sources, alter softness of light source
+* More furniture items
+* Additional items (e.g. vases) requiring extra coordinate
+* Stairs, rugs, carpets
+
+Performance
+* Eliminate cloning in furnishings (by storing inverse matrices)
+* Fewer render calls if possible
+
+Visualization
+* Collision detection
+* Zoom in/out
+* Ability to tilt upwards/downwards on camera
+* Able to see the light source(s)

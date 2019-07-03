@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
-import * as THREE from 'three';
+import { DoubleSide,Mesh,PlaneGeometry,MeshPhongMaterial,Vector2,WebGLRenderer,Raycaster,PCFSoftShadowMap,PerspectiveCamera,PointLight,AmbientLight } from 'three';
 import FormButton from './formbutton';
 import Furnishing from '../furnishings/furnishing';
 import ThreeSixty from '@material-ui/icons/ThreeSixty';
@@ -102,7 +102,7 @@ class MainCanvas extends React.Component {
 
   handleMouseDown = event => {
     event.preventDefault();
-    let mouse = new THREE.Vector2();
+    let mouse = new Vector2();
     var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     mouse.x = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
     mouse.y = -((event.clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
@@ -150,14 +150,14 @@ class MainCanvas extends React.Component {
 
   componentDidMount() {
     const canvas = document.querySelector("#mc");
-    this.renderer = new THREE.WebGLRenderer({canvas:canvas,physicallyCorrectLights:true});
-    this.raycaster = new THREE.Raycaster();
+    this.renderer = new WebGLRenderer({canvas:canvas,physicallyCorrectLights:true});
+    this.raycaster = new Raycaster();
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.camera = new THREE.PerspectiveCamera(75,width/height,0.1,100);
-    this.light = new THREE.PointLight(0xFFFFFF,1,100);
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
+    this.camera = new PerspectiveCamera(75,width/height,0.1,100);
+    this.light = new PointLight(0xFFFFFF,1,100);
     this.light.decay = 2;
-    this.ambientLight = new THREE.AmbientLight( 0x404040 );
+    this.ambientLight = new AmbientLight( 0x404040 );
 
     this.interval = setInterval(
       () => {
@@ -256,43 +256,43 @@ class MainCanvas extends React.Component {
       this.light.castShadow = true;
       this.light.shadow.bias = -0.0002;
       this.light.position.set(0,0.9*this.props.roomProperties.height, 0*0.9*this.props.roomProperties.length / 2);
-      this.floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
-        new THREE.MeshPhongMaterial({color:"white",side:THREE.DoubleSide}) );
+      this.floor = new Mesh(
+        new PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
+        new MeshPhongMaterial({color:"white",side:DoubleSide}) );
       this.floor.receiveShadow = true;
       this.floor.castShadow = true;
       this.floor.rotation.x = Math.PI/2;
       this.floor.position.y = 0.15;
-      this.ceiling = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
-        new THREE.MeshPhongMaterial({color:"white"}) );
+      this.ceiling = new Mesh(
+        new PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.length),
+        new MeshPhongMaterial({color:"white"}) );
       this.ceiling.receiveShadow = true;
       this.ceiling.castShadow = true;
       this.ceiling.rotation.x = Math.PI/2;
       this.ceiling.position.set(0,this.props.roomProperties.height,0);
-      this.wallLeft = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white"}) );
+      this.wallLeft = new Mesh(
+        new PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new MeshPhongMaterial({color:"white"}) );
       this.wallLeft.receiveShadow = true;
       this.wallLeft.castShadow = true;
       this.wallLeft.rotation.y = 1.0*Math.PI/2;
       this.wallLeft.position.set(-this.props.roomProperties.width/2, this.props.roomProperties.height/2, 0);
-      this.wallRight = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white"}) );
+      this.wallRight = new Mesh(
+        new PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new MeshPhongMaterial({color:"white"}) );
       this.wallRight.receiveShadow = true;
       this.wallRight.castShadow = true;
       this.wallRight.rotation.y = -1.0*Math.PI/2;
       this.wallRight.position.set(this.props.roomProperties.width/2, this.props.roomProperties.height/2, 0);
-      this.wallBack = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white"}) );
+      this.wallBack = new Mesh(
+        new PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new MeshPhongMaterial({color:"white"}) );
       this.wallBack.receiveShadow = true;
       this.wallBack.castShadow= true;
       this.wallBack.position.set(0, this.props.roomProperties.height/2, -this.props.roomProperties.length/2);
-      this.wallFront = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
-        new THREE.MeshPhongMaterial({color:"white"}) );
+      this.wallFront = new Mesh(
+        new PlaneGeometry(this.props.roomProperties.width, this.props.roomProperties.height),
+        new MeshPhongMaterial({color:"white"}) );
       this.wallFront.rotation.y = Math.PI;
       this.wallFront.receiveShadow = true;
       this.wallFront.castShadow = true;

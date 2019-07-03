@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Matrix4, Scene } from 'three';
 
 
 function squareRoot255(val) {
@@ -38,7 +38,7 @@ export default class Furnishing {
 
   static doInit(renderer,light,camera) {
     renderer.renderLists.dispose();
-    var scene = new THREE.Scene();
+    var scene = new Scene();
     scene.add(light);
     renderer.render(scene,camera);
     return scene;
@@ -60,31 +60,31 @@ export default class Furnishing {
 
   dispose = () => {
     while(this.threeDimMeshes.length > 0) {
-      var mesh = this.threeDimMeshes.pop();
-      mesh.geometry.dispose();
-      mesh.material.dispose();
+      var thisMesh = this.threeDimMeshes.pop();
+      thisMesh.geometry.dispose();
+      thisMesh.material.dispose();
     }
     while(this.clones.length > 0) {
-      var mesh = this.clones.pop();
-      mesh.geometry.dispose();
-      mesh.material.dispose();
+      var thisOtherMesh = this.clones.pop();
+      thisOtherMesh.geometry.dispose();
+      thisOtherMesh.material.dispose();
     }
   }
 
   renderFurnishing(renderer,camera,light,scene,garbage) {
-    var rotateMat = new THREE.Matrix4();
+    var rotateMat = new Matrix4();
     rotateMat.makeRotationY(this.theta);
-    var translateMat = new THREE.Matrix4();
+    var translateMat = new Matrix4();
     translateMat.makeTranslation(this.posx,0,this.posz);
 
     while(this.clones.length > 0) {
-      var mesh = this.clones.pop();
-      garbage.push(mesh.geometry);
-      garbage.push(mesh.material);
+      var thisMesh = this.clones.pop();
+      garbage.push(thisMesh.geometry);
+      garbage.push(thisMesh.material);
     }
     
-    this.threeDimMeshes.forEach( mesh => {
-      var cloneMesh = mesh.clone();
+    this.threeDimMeshes.forEach( thisMesh => {
+      var cloneMesh = thisMesh.clone();
       cloneMesh.castShadow = true;
       cloneMesh.receiveShadow = true;
       cloneMesh.applyMatrix(rotateMat);
