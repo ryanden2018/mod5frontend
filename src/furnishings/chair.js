@@ -11,7 +11,7 @@ export default class Chair extends Furnishing {
     super(furnishing,colors,brighten);
 
     
-    const material = new MeshPhongMaterial({ bumpMap: dirtTexture,  color: new Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({ map: dirtTexture,  color: new Color(this.red/255,this.green/255,this.blue/255)});
     var scale = 1.5*0.6;
     const backing = new Mesh( new BoxGeometry( scale*0.1,scale*1,scale*1),material);
     backing.position.set(scale*0.55,scale*1.4,scale*0.0);

@@ -11,7 +11,7 @@ export default class Bed extends Furnishing {
   constructor(furnishing,colors,brighten = false) {
     super(furnishing,colors,brighten);
 
-    const material = new MeshPhongMaterial({bumpMap: dirtTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({map: dirtTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
   
     let scale = 1.3;
 

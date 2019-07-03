@@ -11,7 +11,7 @@ export default class BookCase extends Furnishing {
   constructor(furnishing,colors,brighten = false) {
     super(furnishing,colors,brighten);
 
-    const material = new MeshPhongMaterial({bumpMap: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({map: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
     
     const box1 = new Mesh( new BoxGeometry(1.2,0.1,0.9),material);
     box1.position.set(0.0,0.05+0.15,0.0)

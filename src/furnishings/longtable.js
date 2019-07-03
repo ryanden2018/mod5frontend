@@ -10,7 +10,7 @@ export default class LongTable extends Furnishing {
   constructor(furnishing,colors,brighten = false) {
     super(furnishing,colors,brighten);
 
-    const material = new MeshPhongMaterial({bumpMap: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({map: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
     
     let scale = 1.35;
 

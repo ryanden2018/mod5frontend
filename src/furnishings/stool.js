@@ -11,7 +11,7 @@ export default class Stool extends Furnishing {
   constructor(furnishing,colors,brighten=false) {
     super(furnishing,colors,brighten);
 
-    const material = new MeshPhongMaterial({bumpMap: dirtTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({map: dirtTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
     
     var scale = 0.8;
     const cube = new Mesh( new BoxGeometry(scale*1,scale*0.1,scale*1),material);

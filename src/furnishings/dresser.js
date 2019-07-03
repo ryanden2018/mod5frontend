@@ -13,7 +13,7 @@ export default class Dresser extends Furnishing {
 
     let scale = 1.25;
 
-    const material = new MeshPhongMaterial({bumpMap: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
+    const material = new MeshPhongMaterial({map: linesTexture, color: new Color(this.red/255,this.green/255,this.blue/255)});
     
     const cube = new Mesh( new BoxGeometry(1.2*scale,1.5*scale,0.9*scale),material);
     cube.position.set(0.0,-0.1*scale+1.15*scale,0.0)
