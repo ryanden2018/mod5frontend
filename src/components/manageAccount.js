@@ -1,10 +1,11 @@
 import React from 'react';
 import '../App.css';
 import FormButton from './formbutton';
+import ConfirmModal from './confirmmodal';
 
 export default class ManageAccount extends React.Component {
 
-  state = { err: "" }
+  state = { err: "", modal: null,deleteUsername:"" }
 
   componentDidMount() {
     fetch("/api/loggedin")
@@ -46,10 +47,9 @@ export default class ManageAccount extends React.Component {
 
   }
 
-  deleteAccount = (event) => {
-    event.preventDefault();
-    let username = this.props.alphanumericFilter(document.querySelector('#deleteUsername').value);
-    if( username && window.confirm("Are you sure you want to permanently delete this account?") )
+  deleteAccount = () => {
+    let username = this.props.alphanumericFilter(this.state.deleteUsername);
+    if( username )
     {
       fetch(`/api/users/${username}`,{method:"DELETE"})
       .then( () => 
@@ -58,8 +58,23 @@ export default class ManageAccount extends React.Component {
     }
   }
 
+  handleDelete = e => {
+    let name = document.querySelector('#deleteUsername').value;
+    e.preventDefault();
+    e.target.reset();
+    this.setState({modal:"delete",deleteUsername:name}) 
+  }
+
   render() {
     return (
+      <>
+      {
+        (this.state.modal === "delete")
+        ?
+        <ConfirmModal message={"Permanently delete this account?"} cancelCallback={() => this.setState({modal:null})} okCallback={() => {this.setState({modal:null});this.deleteAccount();}} />
+        :
+        null
+      }
       <div style={{width:"100%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Return to Main" handleSubmit={() => this.props.history.push("/main")} />
         <h2>Change Password</h2>
@@ -72,11 +87,12 @@ export default class ManageAccount extends React.Component {
           <p><button type="submit">Submit</button></p>
         </form>
         <h2>Delete Account</h2>
-        <form onSubmit={this.deleteAccount}>
+        <form onSubmit={this.handleDelete}>
           <p>Enter Username: <input type="text" id="deleteUsername" /></p>
           <p><button type="submit">Delete Account</button></p>
         </form>
       </div>
+      </>
     );
   }
 }
