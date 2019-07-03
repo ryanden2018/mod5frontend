@@ -9,6 +9,7 @@ import Furnishing from '../furnishings/furnishing';
 import ThreeSixty from '@material-ui/icons/ThreeSixty';
 import BorderOuter from '@material-ui/icons/BorderOuter';
 import CameraAlt from '@material-ui/icons/CameraAlt';
+import Help from '@material-ui/icons/Help';
 import CenterFocusStrong from '@material-ui/icons/CenterFocusStrong';
 
 const width = 800;
@@ -584,6 +585,7 @@ class MainCanvas extends React.Component {
     return ( 
       <>
       <FileToolbar newRoom={this.newRoom} openRoom={this.openRoom} disposeAllFurnishings={this.disposeAllFurnishings} rebuildRoom={this.rebuildRoom} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} username={this.props.username} colors={this.props.colors} socket={this.props.socket} />
+      <FormButton icon={<Help />} handleSubmit={this.props.openHelp} />
       <div>
         {(!!this.props.roomProperties) ? <ModeToolbar renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} socket={this.props.socket} colors={this.props.colors} username={this.props.username} /> : null }
         {(!!this.props.roomProperties) ? <FormButton icon={<CameraAlt />} value="Reset Camera" handleSubmit={this.resetCamera} /> : null }
