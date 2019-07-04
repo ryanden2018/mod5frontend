@@ -20,7 +20,7 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    fetch('${apiurl}/api/colors')
+    fetch(`${apiurl}/api/colors`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       data.forEach( color => {
