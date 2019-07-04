@@ -585,7 +585,7 @@ class MainCanvas extends React.Component {
     return ( 
       <>
       <FileToolbar newRoom={this.newRoom} openRoom={this.openRoom} disposeAllFurnishings={this.disposeAllFurnishings} rebuildRoom={this.rebuildRoom} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} username={this.props.username} colors={this.props.colors} socket={this.props.socket} />
-      <FormButton icon={<Help />} handleSubmit={this.props.openHelp} />
+      <FormButton value="Help" icon={<Help />} handleSubmit={this.props.openHelp} />
       <div>
         {(!!this.props.roomProperties) ? <ModeToolbar renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} socket={this.props.socket} colors={this.props.colors} username={this.props.username} /> : null }
         {(!!this.props.roomProperties) ? <FormButton icon={<CameraAlt />} value="Reset Camera" handleSubmit={this.resetCamera} /> : null }
