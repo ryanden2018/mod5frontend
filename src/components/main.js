@@ -8,7 +8,7 @@ import AccountBox from '@material-ui/icons/AccountBox';
 import DirectionsWalk from '@material-ui/icons/DirectionsWalk';
 
 const io = require("socket.io-client");
-const wsloc = "ws://localhost:8000";
+const wsloc = "wss://localhost:8000";
 
 class Main extends React.Component {
 
