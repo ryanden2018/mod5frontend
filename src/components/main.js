@@ -20,30 +20,6 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
-    .then( res => res.json() )
-    .then( data => {
-      if(data.status && (data.status.includes('Logged in as '))) {
-        var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
-        this.setState({username:username});
-        this.setState({socket: io(wsloc,{transports:['websocket']}) });
-        fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',credentials:'include'})
-        .then( res => res.json() )
-        .then( rooms => {
-          this.props.setAvailableRooms(rooms)
-        }).catch( () => { } )
-        this.roomsInterval = setInterval( () => {
-          if(this.state.socket) {
-            this.state.socket.emit("getAvailableRooms");
-          }
-        },5000);
-      } else {
-        this.props.history.push("/");
-      }
-    });
-
-  
-
     fetch('${apiurl}/api/colors',{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
@@ -52,7 +28,30 @@ class Main extends React.Component {
         newColors[color.name] = {red: color.red, green: color.green, blue: color.blue};
         this.setState({colors: newColors});
       });
+
+      fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+      .then( res => res.json() )
+      .then( data => {
+        if(data.status && (data.status.includes('Logged in as '))) {
+          var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
+          this.setState({username:username});
+          this.setState({socket: io(wsloc,{transports:['websocket']}) });
+          fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',credentials:'include'})
+          .then( res => res.json() )
+          .then( rooms => {
+            this.props.setAvailableRooms(rooms)
+          }).catch( () => { } )
+          this.roomsInterval = setInterval( () => {
+            if(this.state.socket) {
+              this.state.socket.emit("getAvailableRooms");
+            }
+          },5000);
+        } else {
+          this.props.history.push("/");
+        }
+      });
     }).catch( () => { } )
+   
   }
 
 
