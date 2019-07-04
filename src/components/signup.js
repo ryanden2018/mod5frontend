@@ -1,13 +1,14 @@
 import React from 'react';
 import '../App.css';
 import FormButton from './formbutton';
+import apiurl from './apiurl';
 
 export default class Signup extends React.Component {
 
   state = { err: "" }
 
   componentDidMount() {
-    fetch("/api/loggedin")
+    fetch(`${apiurl}/api/loggedin`)
     .then( res => res.json() )
     .then( data => {
       if(data.status.includes("Logged in as ")) {
@@ -27,7 +28,7 @@ export default class Signup extends React.Component {
       return;
     }
 
-    fetch(`/api/${username}/exists`)
+    fetch(`${apiurl}/api/${username}/exists`)
     .then(res=>res.json())
     .then( data => {
       if(data.status === "user exists") {
@@ -36,13 +37,13 @@ export default class Signup extends React.Component {
         if(password !== confirmPassword) {
           this.setState({err: "Passwords must match"});
         } else {
-          fetch(`/api/users`,{method:"POST",
+          fetch(`${apiurl}/api/users`,{method:"POST",
             headers: {"Content-type":"application/json"},
             body: JSON.stringify({ username:username, password: password })
           }).then(res=>res.json())
           .then( response => {
             if(response.success) {
-              fetch(`/api/login`, {method:"POST",
+              fetch(`${apiurl}/api/login`, {method:"POST",
                 headers:{"Content-type":"application/json"},
                 body:JSON.stringify({username:username,password:password})
               }).then(
