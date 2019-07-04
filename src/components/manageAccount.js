@@ -9,7 +9,7 @@ export default class ManageAccount extends React.Component {
   state = { err: "", modal: null,deleteUsername:"" }
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`)
+    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(!data.status.includes("Logged in as ")) {
@@ -35,6 +35,7 @@ export default class ManageAccount extends React.Component {
     } else {
       fetch(`${apiurl}/api/users/${username}/password`,{method:"PATCH",
         headers: {"Content-type":"application/json"},
+        credentials:'include',
         body: JSON.stringify({ currentPassword:oldPassword, newPassword: password })
       }).then(res=>res.json())
       .then( response => {
@@ -52,9 +53,9 @@ export default class ManageAccount extends React.Component {
     let username = this.props.alphanumericFilter(this.state.deleteUsername);
     if( username )
     {
-      fetch(`${apiurl}/api/users/${username}`,{method:"DELETE"})
+      fetch(`${apiurl}/api/users/${username}`,{method:"DELETE",credentials:'include'})
       .then( () => 
-        fetch(`${apiurl}/api/login`, {method:'DELETE'})
+        fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'})
         .then( () => this.props.history.push("/") ) );
     }
   }

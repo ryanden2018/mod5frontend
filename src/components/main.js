@@ -20,14 +20,14 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`)
+    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(data.status && (data.status.includes('Logged in as '))) {
         var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
         this.setState({username:username});
         this.setState({socket: io(wsloc,{transports:['websocket']}) });
-        fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`)
+        fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',credentials:'include'})
         .then( res => res.json() )
         .then( rooms => {
           this.props.setAvailableRooms(rooms)
@@ -44,7 +44,7 @@ class Main extends React.Component {
 
   
 
-    fetch('${apiurl}/api/colors')
+    fetch('${apiurl}/api/colors',{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       data.forEach( color => {
@@ -73,7 +73,7 @@ class Main extends React.Component {
     this.props.lockLogout();
     this.props.fileLogout();
     this.props.roomLogout();
-    fetch(`${apiurl}/api/login`, {method:'DELETE'});
+    fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'});
     this.props.history.push("/");
   }
 
