@@ -20,7 +20,7 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`)
+    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(data.status && (data.status.includes('Logged in as '))) {
