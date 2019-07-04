@@ -1,6 +1,7 @@
 import React from 'react';
 import FormButton from './formbutton';
 import '../App.css';
+import apiurl from './apiurl';
 
 export default class Login extends React.Component {
 
@@ -8,7 +9,7 @@ export default class Login extends React.Component {
 
 
   componentDidMount() {
-    fetch("/api/loggedin")
+    fetch(`${apiurl}/api/loggedin`)
     .then( res => res.json() )
     .then( data => {
       if(data.status.includes("Logged in as ")) {
@@ -25,7 +26,7 @@ export default class Login extends React.Component {
       this.setState({err:"Username and password must be alphanumeric."});
       return;
     }
-    fetch(`/api/login`, {method:"POST",
+    fetch(`${apiurl}/api/login`, {method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({username:username,password:password})
     }).then( res => res.json() )

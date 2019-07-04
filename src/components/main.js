@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AccountBox from '@material-ui/icons/AccountBox';
 import DirectionsWalk from '@material-ui/icons/DirectionsWalk';
+import apiurl from './apiurl';
 
 const io = require("socket.io-client");
 const wsloc = "wss://ryanmod5backend.herokuapp.com";
@@ -19,14 +20,14 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`/api/loggedin`)
+    fetch(`${apiurl}/api/loggedin`)
     .then( res => res.json() )
     .then( data => {
       if(data.status && (data.status.includes('Logged in as '))) {
         var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
         this.setState({username:username});
         this.setState({socket: io(wsloc,{transports:['websocket']}) });
-        fetch(`/api/users/${this.props.alphanumericFilter(username)}/rooms`)
+        fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`)
         .then( res => res.json() )
         .then( rooms => {
           this.props.setAvailableRooms(rooms)
@@ -43,7 +44,7 @@ class Main extends React.Component {
 
   
 
-    fetch('/api/colors')
+    fetch('${apiurl}/api/colors')
     .then( res => res.json() )
     .then( data => {
       data.forEach( color => {
@@ -72,7 +73,7 @@ class Main extends React.Component {
     this.props.lockLogout();
     this.props.fileLogout();
     this.props.roomLogout();
-    fetch(`/api/login`, {method:'DELETE'});
+    fetch(`${apiurl}/api/login`, {method:'DELETE'});
     this.props.history.push("/");
   }
 

@@ -2,13 +2,14 @@ import React from 'react';
 import '../App.css';
 import FormButton from './formbutton';
 import ConfirmModal from './confirmmodal';
+import apiurl from './apiurl';
 
 export default class ManageAccount extends React.Component {
 
   state = { err: "", modal: null,deleteUsername:"" }
 
   componentDidMount() {
-    fetch("/api/loggedin")
+    fetch(`${apiurl}/api/loggedin`)
     .then( res => res.json() )
     .then( data => {
       if(!data.status.includes("Logged in as ")) {
@@ -32,7 +33,7 @@ export default class ManageAccount extends React.Component {
     if(password !== confirmPassword) {
       this.setState({err: "New passwords must match"});
     } else {
-      fetch(`/api/users/${username}/password`,{method:"PATCH",
+      fetch(`${apiurl}/api/users/${username}/password`,{method:"PATCH",
         headers: {"Content-type":"application/json"},
         body: JSON.stringify({ currentPassword:oldPassword, newPassword: password })
       }).then(res=>res.json())
@@ -51,9 +52,9 @@ export default class ManageAccount extends React.Component {
     let username = this.props.alphanumericFilter(this.state.deleteUsername);
     if( username )
     {
-      fetch(`/api/users/${username}`,{method:"DELETE"})
+      fetch(`${apiurl}/api/users/${username}`,{method:"DELETE"})
       .then( () => 
-        fetch(`/api/login`, {method:'DELETE'})
+        fetch(`${apiurl}/api/login`, {method:'DELETE'})
         .then( () => this.props.history.push("/") ) );
     }
   }
