@@ -118,12 +118,12 @@ class MainCanvas extends React.Component {
           this.props.socket.emit("join",{roomId:data.id});
           this.setState({roomId: data.id});
         } else {
-          this.setError("Could not create room");
+          this.props.setErrMsg("Could not create room");
         }
       })
-      .catch( () => this.setError("Could not create room") );
+      .catch( () => this.props.setErrMsg("Could not create room") );
     } else {
-      this.setError("Could not create room");
+      this.props.setErrMsg("Could not create room");
     }
   }
 
