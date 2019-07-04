@@ -30,6 +30,7 @@ class FileToolbar extends React.Component {
     if(username) {
       fetch(`${apiurl}/api/UserRooms`, {method:"POST",
         headers:{"Content-Type":"application/json"},
+        credentials:'include',
         body: JSON.stringify( {recipientUsername: username, roomId: this.props.alphanumericFilter(this.props.roomProperties.id)} ) } )
       .catch( () => { this.setError("Could not invite user"); } );
     } else {
@@ -39,7 +40,7 @@ class FileToolbar extends React.Component {
 
   deleteRoom = () => {
     this.setState({modal:null});
-    fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE'})
+    fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE',credentials:'include'})
     .then( () => { 
       this.props.socket.emit("roomDeleted");
       this.props.resetFile();
