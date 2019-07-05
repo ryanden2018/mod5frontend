@@ -12,6 +12,7 @@ import Create from '@material-ui/icons/Create';
 import FolderOpen from '@material-ui/icons/FolderOpen';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import apiurl from './apiurl';
+import {fetch as fetchPolyfill} from 'whatwg-fetch'
 
 class FileToolbar extends React.Component {
 
@@ -28,7 +29,7 @@ class FileToolbar extends React.Component {
     this.setState({modal:null});
     let username = this.props.alphanumericFilter(inputVal);
     if(username) {
-      fetch(`${apiurl}/api/UserRooms`, {method:"POST",
+      fetchPolyfill(`${apiurl}/api/UserRooms`, {method:"POST",
         headers:{"Content-Type":"application/json"},
         credentials:'include',
         body: JSON.stringify( {recipientUsername: username, roomId: this.props.alphanumericFilter(this.props.roomProperties.id)} ) } )
@@ -40,7 +41,7 @@ class FileToolbar extends React.Component {
 
   deleteRoom = () => {
     this.setState({modal:null});
-    fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE',credentials:'include'})
+    fetchPolyfill(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE',credentials:'include'})
     .then( () => { 
       this.props.socket.emit("roomDeleted");
       this.props.resetFile();
