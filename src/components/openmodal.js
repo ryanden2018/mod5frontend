@@ -23,8 +23,8 @@ export default class OpenModal extends Modal {
           </select>
         }
         </p>
-        <p><FormButton value="Cancel" handleSubmit={this.props.cancelCallback} />
-        <FormButton value="OK" handleSubmit={() => this.props.okCallback(document.querySelector("#openSelect").value)} /></p>
+        <FormButton value="Cancel" handleSubmit={this.props.cancelCallback} />
+        <FormButton value="OK" handleSubmit={() => this.props.okCallback(document.querySelector("#openSelect").value)} />
       </div>
     );
   }
