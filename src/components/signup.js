@@ -2,13 +2,14 @@ import React from 'react';
 import '../App.css';
 import FormButton from './formbutton';
 import apiurl from './apiurl';
+import {fetch as fetchPolyfill} from 'whatwg-fetch'
 
 export default class Signup extends React.Component {
 
   state = { err: "" }
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+    fetchPolyfill(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(data.status.includes("Logged in as ")) {
@@ -28,7 +29,7 @@ export default class Signup extends React.Component {
       return;
     }
 
-    fetch(`${apiurl}/api/${username}/exists`,{method:'GET',credentials:'include'})
+    fetchPolyfill(`${apiurl}/api/${username}/exists`,{method:'GET',credentials:'include'})
     .then(res=>res.json())
     .then( data => {
       if(data.status === "user exists") {
@@ -37,14 +38,14 @@ export default class Signup extends React.Component {
         if(password !== confirmPassword) {
           this.setState({err: "Passwords must match"});
         } else {
-          fetch(`${apiurl}/api/users`,{method:"POST",
+          fetchPolyfill(`${apiurl}/api/users`,{method:"POST",
             headers: {"Content-type":"application/json"},
             credentials:'include',
             body: JSON.stringify({ username:username, password: password })
           }).then(res=>res.json())
           .then( response => {
             if(response.success) {
-              fetch(`${apiurl}/api/login`, {method:"POST",
+              fetchPolyfill(`${apiurl}/api/login`, {method:"POST",
                 headers:{"Content-type":"application/json"},
                 credentials:'include',
                 body:JSON.stringify({username:username,password:password})

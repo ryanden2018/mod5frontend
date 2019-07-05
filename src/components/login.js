@@ -2,6 +2,7 @@ import React from 'react';
 import FormButton from './formbutton';
 import '../App.css';
 import apiurl from './apiurl';
+import {fetch as fetchPolyfill} from 'whatwg-fetch'
 
 export default class Login extends React.Component {
 
@@ -9,7 +10,7 @@ export default class Login extends React.Component {
 
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+    fetchPolyfill(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(data.status.includes("Logged in as ")) {
@@ -26,7 +27,7 @@ export default class Login extends React.Component {
       this.setState({err:"Username and password must be alphanumeric."});
       return;
     }
-    fetch(`${apiurl}/api/login`, {method:"POST",
+    fetchPolyfill(`${apiurl}/api/login`, {method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({username:username,password:password}),
       credentials: 'include'
