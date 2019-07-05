@@ -2,7 +2,8 @@ import React from 'react';
 import FormButton from './formbutton';
 import '../App.css';
 import apiurl from './apiurl';
-import {fetch as fetchPolyfill} from 'whatwg-fetch'
+import 'whatwg-fetch'
+import 'promise-polyfill/src/polyfill';
 
 export default class Login extends React.Component {
 
@@ -10,7 +11,7 @@ export default class Login extends React.Component {
 
 
   componentDidMount() {
-    fetchPolyfill(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(data.status.includes("Logged in as ")) {
@@ -29,35 +30,18 @@ export default class Login extends React.Component {
     }
 
 
-
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST',`${apiurl}/api/login`,true);
-    //xhr.overrideMimeType("application/json");
-    xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
-    xhr.withCredentials = true;
-    xhr.onload = () => {
-      console.log(xhr.responseText);
-      var data = JSON.parse(xhr.responseText);
+    fetch(`${apiurl}/api/login`, {method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username:username,password:password}),
+      credentials: 'include'
+    }).then( res => res.json() )
+    .then( data => {
       if(data.success) {
         this.props.history.push("/main");
       } else {
         this.setState({err:"Could not log in"});
       }
-    };
-    xhr.send(JSON.stringify({username:username,password:password}));
-
-    // fetchPolyfill(`${apiurl}/api/login`, {method:"POST",
-    //   headers:{"Content-Type":"application/json"},
-    //   body:JSON.stringify({username:username,password:password}),
-    //   credentials: 'include'
-    // }).then( res => res.json() )
-    // .then( data => {
-    //   if(data.success) {
-    //     this.props.history.push("/main");
-    //   } else {
-    //     this.setState({err:"Could not log in"});
-    //   }
-    // });
+    });
   }
 
 

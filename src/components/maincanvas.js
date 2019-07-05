@@ -12,7 +12,8 @@ import CameraAlt from '@material-ui/icons/CameraAlt';
 import Help from '@material-ui/icons/Help';
 import CenterFocusStrong from '@material-ui/icons/CenterFocusStrong';
 import apiurl from './apiurl';
-import {fetch as fetchPolyfill} from 'whatwg-fetch'
+import 'whatwg-fetch'
+import 'promise-polyfill/src/polyfill';
 
 const width = 800;
 const height = 600;
@@ -51,12 +52,12 @@ class MainCanvas extends React.Component {
   openRoom = (inputVal) => {
     let roomId = parseInt(inputVal);
     if(roomId !== -1) {
-      fetchPolyfill(`${apiurl}/api/rooms/${this.props.alphanumericFilter(roomId)}`,{method:'GET',credentials:'include'})
+      fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(roomId)}`,{method:'GET',credentials:'include'})
       .then( res => res.json() )
       .then( room => {
         this.props.setRoomProperties(room);
         this.rebuildRoom();
-        fetchPolyfill(`${apiurl}/api/rooms/${this.props.alphanumericFilter(roomId)}/furnishings`,{method:'GET',credentials:'include'})
+        fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(roomId)}/furnishings`,{method:'GET',credentials:'include'})
         .then(res => res.json() )
         .then( furnishings => {
           if(!furnishings.error) {
@@ -68,7 +69,7 @@ class MainCanvas extends React.Component {
             );
             this.props.socket.emit("join",{roomId:roomId});
 
-            fetchPolyfill(`${apiurl}/api/rooms/${this.props.alphanumericFilter(roomId)}/isOwner`,{method:'GET',credentials:'include'})
+            fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(roomId)}/isOwner`,{method:'GET',credentials:'include'})
             .then(res=>res.json())
             .then( results => {
               if(results.status) {
@@ -106,7 +107,7 @@ class MainCanvas extends React.Component {
     let name = this.props.alphanumericFilter(roomName)
     let size = this.props.alphanumericFilter(roomSize)
     if(name && size && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
-      fetchPolyfill(`${apiurl}/api/rooms`, { method:"POST",
+      fetch(`${apiurl}/api/rooms`, { method:"POST",
         headers: {"Content-type":"application/json"},
         credentials:'include',
         body: JSON.stringify( {room:{name:name,length:parseInt(size)+3,width:parseInt(size)+3,height:4}} ) }

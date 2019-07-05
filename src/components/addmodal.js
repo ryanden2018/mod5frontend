@@ -38,8 +38,8 @@ export default class AddModal extends Modal {
           </select>
         }
         </p>
-        <p><FormButton value="Cancel" handleSubmit={this.props.cancelCallback} />
-        <FormButton value="OK" handleSubmit={() => this.props.okCallback(document.querySelector("#furnishingSelect").value)} /></p>
+        <FormButton value="Cancel" handleSubmit={this.props.cancelCallback} />
+        <FormButton value="OK" handleSubmit={() => this.props.okCallback(document.querySelector("#furnishingSelect").value)} />
       </div>
     );
   }

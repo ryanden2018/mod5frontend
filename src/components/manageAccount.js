@@ -3,14 +3,15 @@ import '../App.css';
 import FormButton from './formbutton';
 import ConfirmModal from './confirmmodal';
 import apiurl from './apiurl';
-import {fetch as fetchPolyfill} from 'whatwg-fetch'
+import 'whatwg-fetch'
+import 'promise-polyfill/src/polyfill';
 
 export default class ManageAccount extends React.Component {
 
   state = { err: "", modal: null,deleteUsername:"" }
 
   componentDidMount() {
-    fetchPolyfill(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(!data.status.includes("Logged in as ")) {
@@ -34,7 +35,7 @@ export default class ManageAccount extends React.Component {
     if(password !== confirmPassword) {
       this.setState({err: "New passwords must match"});
     } else {
-      fetchPolyfill(`${apiurl}/api/users/${username}/password`,{method:"PATCH",
+      fetch(`${apiurl}/api/users/${username}/password`,{method:"PATCH",
         headers: {"Content-type":"application/json"},
         credentials:'include',
         body: JSON.stringify({ currentPassword:oldPassword, newPassword: password })
@@ -54,9 +55,9 @@ export default class ManageAccount extends React.Component {
     let username = this.props.alphanumericFilter(this.state.deleteUsername);
     if( username )
     {
-      fetchPolyfill(`${apiurl}/api/users/${username}`,{method:"DELETE",credentials:'include'})
+      fetch(`${apiurl}/api/users/${username}`,{method:"DELETE",credentials:'include'})
       .then( () => 
-        fetchPolyfill(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'})
+        fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'})
         .then( () => this.props.history.push("/") ) );
     }
   }
