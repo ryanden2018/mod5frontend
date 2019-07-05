@@ -36,6 +36,7 @@ export default class Login extends React.Component {
     xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
     xhr.withCredentials = true;
     xhr.onload = () => {
+      console.log(xhr.responseText);
       var data = JSON.parse(xhr.responseText);
       if(data.success) {
         this.props.history.push("/main");
