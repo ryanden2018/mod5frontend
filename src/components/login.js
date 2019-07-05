@@ -27,18 +27,36 @@ export default class Login extends React.Component {
       this.setState({err:"Username and password must be alphanumeric."});
       return;
     }
-    fetchPolyfill(`${apiurl}/api/login`, {method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({username:username,password:password}),
-      credentials: 'include'
-    }).then( res => res.json() )
-    .then( data => {
+
+
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST',`${apiurl}/api/login`,true);
+    //xhr.overrideMimeType("application/json");
+    xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+    xhr.withCredentials = true;
+    xhr.onload = () => {
+      var data = JSON.parse(xhr.responseText);
       if(data.success) {
         this.props.history.push("/main");
       } else {
         this.setState({err:"Could not log in"});
       }
-    });
+    };
+    xhr.send(JSON.stringify({username:username,password:password}));
+
+    // fetchPolyfill(`${apiurl}/api/login`, {method:"POST",
+    //   headers:{"Content-Type":"application/json"},
+    //   body:JSON.stringify({username:username,password:password}),
+    //   credentials: 'include'
+    // }).then( res => res.json() )
+    // .then( data => {
+    //   if(data.success) {
+    //     this.props.history.push("/main");
+    //   } else {
+    //     this.setState({err:"Could not log in"});
+    //   }
+    // });
   }
 
 
