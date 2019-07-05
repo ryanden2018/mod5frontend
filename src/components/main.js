@@ -9,7 +9,7 @@ import DirectionsWalk from '@material-ui/icons/DirectionsWalk';
 import apiurl from './apiurl';
 
 const io = require("socket.io-client");
-const wsloc = "wss://ryanmod5backend.herokuapp.com";
+const wsloc = ( (process.env.NODE_HOME && process.env.NODE_HOME.include("heroku")) ? "wss://ryanmod5backend.herokuapp.com" : "ws://localhost:8000" );
 
 class Main extends React.Component {
 
