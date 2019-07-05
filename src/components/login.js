@@ -49,7 +49,8 @@ export default class Login extends React.Component {
     return ( 
       <div style={{width:"100%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Sign Up" handleSubmit={() => this.props.history.push("/signup")} />
-        <form onSubmit={this.handleSubmit}>
+        {/*<form onSubmit={this.handleSubmit}>*/}
+        <form method="POST" action="${apiurl}/login">
           <p>Username: <input type="text" id="username" /></p>
           <p>Password: <input type="password" id="password" /></p>
           <p style={{color:"red"}}><b>{this.state.err}</b></p>
