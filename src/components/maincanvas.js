@@ -175,6 +175,7 @@ class MainCanvas extends React.Component {
 
   handleTouchMove = event => {
     event.preventDefault();
+    event.stopPropagation();
     let lastTouchMoveX = this.lastTouchMoveX;
     let lastTouchMoveY = this.lastTouchMoveY;
     this.lastTouchMoveX = event.touches[0].pageX;
