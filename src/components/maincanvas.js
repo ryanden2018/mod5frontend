@@ -170,19 +170,19 @@ class MainCanvas extends React.Component {
 
   handleMouseMove = event => {
     event.preventDefault();
-    this.handleMove(event.clientX,event.clientY,event.movementX,event.movementY);
+    this.handleMove(event.pageX,event.pageY,event.movementX,event.movementY);
   }
 
   handleTouchMove = event => {
     event.preventDefault();
     let lastTouchMoveX = this.lastTouchMoveX;
     let lastTouchMoveY = this.lastTouchMoveY;
-    this.lastTouchMoveX = event.touches[0].clientX;
-    this.lastTouchMoveY = event.touches[0].clientY;
+    this.lastTouchMoveX = event.touches[0].pageX;
+    this.lastTouchMoveY = event.touches[0].pageY;
     if(lastTouchMoveX && lastTouchMoveY) {
-      this.handleMove(event.touches[0].clientX,event.touches[0].clientY,
-        event.touches[0].clientX-lastTouchMoveX,
-        event.touches[0].clientY-lastTouchMoveY);
+      this.handleMove(event.touches[0].pageX,event.touches[0].pageY,
+        event.touches[0].pageX-lastTouchMoveX,
+        event.touches[0].pageY-lastTouchMoveY);
     }
   }
 
@@ -207,6 +207,7 @@ class MainCanvas extends React.Component {
         }
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        scrollOffset = 0;
         let xval = ((clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
         let yval = -((clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
         let diffx = xval - this.props.lock.mousex;
@@ -258,17 +259,18 @@ class MainCanvas extends React.Component {
 
   handleMouseDown = event => {
     event.preventDefault();
-    this.handleDown( event.clientX, event.clientY );
+    this.handleDown( event.pageX, event.pageY );
   }
 
   handleTouchStart = event => {
     event.preventDefault();
-    this.handleDown(event.touches[0].clientX,event.touches[0].clentY);
+    this.handleDown(event.touches[0].pageX,event.touches[0].pageY);
   }
 
   handleDown = (clientX,clientY) => {
     let mouse = new Vector2();
     var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    scrollOffset = 0;
     mouse.x = ((clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
     mouse.y = -((clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
     this.props.setMouseDown(mouse.x,mouse.y)
@@ -315,6 +317,8 @@ class MainCanvas extends React.Component {
 
   handleTouchEnd = event => {
     event.preventDefault();
+    this.lastTouchMoveX = null;
+    this.lastTouchMoveY = null;
     this.handleUp();
   }
 
