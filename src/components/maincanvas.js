@@ -186,7 +186,7 @@ class MainCanvas extends React.Component {
     }
   }
 
-  handleMove = (clientX,clientY,movementX,movementY) => {
+  handleMove = (pageX,pageY,movementX,movementY) => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
         if(!this.state.overheadView) {
@@ -206,10 +206,8 @@ class MainCanvas extends React.Component {
           this.props.socket.emit("mouseMoved", {furnishingId: this.props.lock.furnishingId, diffX:diffX, diffZ:diffZ, diffTheta:0.0});
         }
       } else if (this.props.mode.mode === "rotate") {
-        var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-        scrollOffset = 0;
-        let xval = ((clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
-        let yval = -((clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
+        let xval = ((pageX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
+        let yval = -((pageY-this.renderer.domElement.offsetTop) / height) * 2 + 1;
         let diffx = xval - this.props.lock.mousex;
         let diffy = yval - this.props.lock.mousey;
         let dx = movementX / width;
@@ -267,12 +265,10 @@ class MainCanvas extends React.Component {
     this.handleDown(event.touches[0].pageX,event.touches[0].pageY);
   }
 
-  handleDown = (clientX,clientY) => {
+  handleDown = (pageX,pageY) => {
     let mouse = new Vector2();
-    var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    scrollOffset = 0;
-    mouse.x = ((clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
-    mouse.y = -((clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
+    mouse.x = ((pageX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
+    mouse.y = -((pageY-this.renderer.domElement.offsetTop) / height) * 2 + 1;
     this.props.setMouseDown(mouse.x,mouse.y)
     this.raycaster.setFromCamera( mouse, this.camera);
     var furnishing = null;
@@ -636,7 +632,7 @@ class MainCanvas extends React.Component {
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} /> : null }
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" icon={<BorderOuter />} handleSubmit={this.handleOverhead} /> : null }
       </div> 
-        <div width={width} height={height} onMouseDown={this.handleMouseDown} onTouchStart={this.handleTouchStart} onMouseMove={this.handleMouseMove} onTouchMove={this.handleTouchMove} onMouseUp={this.handleMouseUp} onTouchEnd={this.handleMouseEnd}>
+        <div width={width} height={height} onMouseDown={this.handleMouseDown} onTouchStart={this.handleTouchStart} onMouseMove={this.handleMouseMove} onTouchMove={this.handleTouchMove} onMouseUp={this.handleMouseUp} onTouchEnd={this.handleMouseEnd} onTouchCancel={this.handleMouseEnd} onMouseOut={this.handleMouseUp}>
           <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
         </div>
       </>
