@@ -170,11 +170,28 @@ class MainCanvas extends React.Component {
 
   handleMouseMove = event => {
     event.preventDefault();
+    this.handleMove(event.clientX,event.clientY,event.movementX,event.movementY);
+  }
+
+  handleTouchMove = event => {
+    event.preventDefault();
+    let lastTouchMoveX = this.lastTouchMoveX;
+    let lastTouchMoveY = this.lastTouchMoveY;
+    this.lastTouchMoveX = event.touches[0].clientX;
+    this.lastTouchMoveY = event.touches[0].clientY;
+    if(lastTouchMoveX && lastTouchMoveY) {
+      this.handleMove(event.touches[0].clientX,event.touches[0].clientY,
+        event.touches[0].clientX-lastTouchMoveX,
+        event.touches[0].clientY-lastTouchMoveY);
+    }
+  }
+
+  handleMove = (clientX,clientY,movementX,movementY) => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
         if(!this.state.overheadView) {
-          let a = this.props.roomProperties.width*event.movementX/width;
-          let b = this.props.roomProperties.length*event.movementY/height;
+          let a = this.props.roomProperties.width*movementX/width;
+          let b = this.props.roomProperties.length*movementY/height;
           let theta = this.state.cameraRotDispY;
           let diffX = a*Math.cos(theta)+b*Math.sin(theta);
           let diffZ = -1*a*Math.sin(theta)+b*Math.cos(theta);
@@ -182,20 +199,20 @@ class MainCanvas extends React.Component {
           this.moveZ(diffZ, this.props.lock.furnishingId);
           this.props.socket.emit("mouseMoved", {furnishingId: this.props.lock.furnishingId, diffX:diffX, diffZ:diffZ, diffTheta:0.0});
         } else {
-          let diffX = this.props.roomProperties.width*event.movementX/width;
-          let diffZ = this.props.roomProperties.length*event.movementY/height
+          let diffX = this.props.roomProperties.width*movementX/width;
+          let diffZ = this.props.roomProperties.length*movementY/height
           this.moveX(diffX, this.props.lock.furnishingId);
           this.moveZ(diffZ, this.props.lock.furnishingId);
           this.props.socket.emit("mouseMoved", {furnishingId: this.props.lock.furnishingId, diffX:diffX, diffZ:diffZ, diffTheta:0.0});
         }
       } else if (this.props.mode.mode === "rotate") {
         var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-        let xval = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
-        let yval = -((event.clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
+        let xval = ((clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
+        let yval = -((clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
         let diffx = xval - this.props.lock.mousex;
         let diffy = yval - this.props.lock.mousey;
-        let dx = event.movementX / width;
-        let dy = event.movementY / height;
+        let dx = movementX / width;
+        let dy = movementY / height;
         if( (diffx!==0) && (diffy!==0) && (dx!==0) && (dy!==0) ) {
           let theta1 = angle(diffx,diffy);
           let theta2 = angle(diffx+dx,diffy-dy);
@@ -208,8 +225,8 @@ class MainCanvas extends React.Component {
       }
     } else if ( this.props.lock.mouseDown ) {
       if( (!this.state.rotatingCameraMode) && (!this.state.overheadView) ) {
-        let a = -this.props.roomProperties.width*event.movementX/width;
-        let b = -this.props.roomProperties.length*event.movementY/height;
+        let a = -this.props.roomProperties.width*movementX/width;
+        let b = -this.props.roomProperties.length*movementY/height;
         let theta = this.state.cameraRotDispY;
         this.setState({
           cameraDispX: this.state.cameraDispX + a*Math.cos(theta) + b*Math.sin(theta),
@@ -225,7 +242,7 @@ class MainCanvas extends React.Component {
            } )
       } else if (!this.state.overheadView) {
         this.setState({
-          cameraRotDispY: this.state.cameraRotDispY + 5*event.movementX/width
+          cameraRotDispY: this.state.cameraRotDispY + 5*movementX/width
         }, () => {
           this.camera.position.x = 0.0 + this.state.cameraDispX;
           this.camera.position.y =  this.props.roomProperties.height * 0.5;
@@ -241,10 +258,19 @@ class MainCanvas extends React.Component {
 
   handleMouseDown = event => {
     event.preventDefault();
+    this.handleDown( event.clientX, event.clientY );
+  }
+
+  handleTouchStart = event => {
+    event.preventDefault();
+    this.handleDown(event.touches[0].clientX,event.touches[0].clentY);
+  }
+
+  handleDown = (clientX,clientY) => {
     let mouse = new Vector2();
     var scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    mouse.x = ((event.clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
-    mouse.y = -((event.clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
+    mouse.x = ((clientX-this.renderer.domElement.offsetLeft) / width) * 2 - 1;
+    mouse.y = -((clientY-this.renderer.domElement.offsetTop+scrollOffset) / height) * 2 + 1;
     this.props.setMouseDown(mouse.x,mouse.y)
     this.raycaster.setFromCamera( mouse, this.camera);
     var furnishing = null;
@@ -284,6 +310,15 @@ class MainCanvas extends React.Component {
 
   handleMouseUp = event => {
     event.preventDefault();
+    this.handleUp();
+  }
+
+  handleTouchEnd = event => {
+    event.preventDefault();
+    this.handleUp();
+  }
+
+  handleUp = () => {
     if(this.props.lock.lockObtained && this.props.lock.furnishingId) {
         this.props.socket.emit("lockRelease",{furnishing:
           this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
@@ -597,7 +632,7 @@ class MainCanvas extends React.Component {
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} /> : null }
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" icon={<BorderOuter />} handleSubmit={this.handleOverhead} /> : null }
       </div> 
-        <div width={width} height={height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
+        <div width={width} height={height} onMouseDown={this.handleMouseDown} onTouchStart={this.handleTouchStart} onMouseMove={this.handleMouseMove} onTouchMove={this.handleTouchMove} onMouseUp={this.handleMouseUp} onTouchEnd={this.handleMouseEnd}>
           <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
         </div>
       </>
