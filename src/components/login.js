@@ -11,7 +11,11 @@ export default class Login extends React.Component {
 
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+    fetch(`${apiurl}/api/loggedin`,{
+      method:'GET',
+      credentials:'include',
+      headers:{'Authorization':`Bearer ${localStorage.token}`}
+    })
     .then( res => res.json() )
     .then( data => {
       if(data.status.includes("Logged in as ")) {
@@ -37,7 +41,19 @@ export default class Login extends React.Component {
     }).then( res => res.json() )
     .then( data => {
       if(data.success) {
-        this.props.history.push("/main");
+      
+        // check user was actually logged in
+        fetch(`${apiurl}/api/loggedin`,{method:"GET",credentials:'include'})
+        .then(res => res.json())
+        .then(outcome => {
+          if(outcome.status.includes("Logged in as ")) {
+            this.props.history.push("/main");
+          } else {
+            localStorage.setItem("token",data.token);
+          }
+        });
+
+        
       } else {
         this.setState({err:"Could not log in"});
       }

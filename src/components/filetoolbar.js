@@ -31,7 +31,8 @@ class FileToolbar extends React.Component {
     let username = this.props.alphanumericFilter(inputVal);
     if(username) {
       fetch(`${apiurl}/api/UserRooms`, {method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:{"Content-Type":"application/json",
+                "Authorization":`Bearer ${localStorage.token}`},
         credentials:'include',
         body: JSON.stringify( {recipientUsername: username, roomId: this.props.alphanumericFilter(this.props.roomProperties.id)} ) } )
       .catch( () => { this.setError("Could not invite user"); } );
@@ -42,7 +43,7 @@ class FileToolbar extends React.Component {
 
   deleteRoom = () => {
     this.setState({modal:null});
-    fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE',credentials:'include'})
+    fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
     .then( () => { 
       this.props.socket.emit("roomDeleted");
       this.props.resetFile();

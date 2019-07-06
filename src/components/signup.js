@@ -10,7 +10,7 @@ export default class Signup extends React.Component {
   state = { err: "" }
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+    fetch(`${apiurl}/api/loggedin`,{method:'GET',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(data.status.includes("Logged in as ")) {
@@ -30,7 +30,7 @@ export default class Signup extends React.Component {
       return;
     }
 
-    fetch(`${apiurl}/api/${username}/exists`,{method:'GET',credentials:'include'})
+    fetch(`${apiurl}/api/${username}/exists`,{method:'GET',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
     .then(res=>res.json())
     .then( data => {
       if(data.status === "user exists") {
@@ -40,14 +40,14 @@ export default class Signup extends React.Component {
           this.setState({err: "Passwords must match"});
         } else {
           fetch(`${apiurl}/api/users`,{method:"POST",
-            headers: {"Content-type":"application/json"},
+            headers: {"Content-type":"application/json","Authorization":`Bearer ${localStorage.token}`},
             credentials:'include',
             body: JSON.stringify({ username:username, password: password })
           }).then(res=>res.json())
           .then( response => {
             if(response.success) {
               fetch(`${apiurl}/api/login`, {method:"POST",
-                headers:{"Content-type":"application/json"},
+                headers:{"Content-type":"application/json","Authorization":`Bearer ${localStorage.token}`},
                 credentials:'include',
                 body:JSON.stringify({username:username,password:password})
               }).then(
