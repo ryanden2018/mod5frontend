@@ -632,7 +632,7 @@ class MainCanvas extends React.Component {
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} /> : null }
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" icon={<BorderOuter />} handleSubmit={this.handleOverhead} /> : null }
       </div> 
-        <div width={width} height={height} onMouseDown={this.handleMouseDown} onTouchStart={this.handleTouchStart} onMouseMove={this.handleMouseMove} onTouchMove={this.handleTouchMove} onMouseUp={this.handleMouseUp} onTouchEnd={this.handleMouseEnd} onTouchCancel={this.handleMouseEnd} onMouseOut={this.handleMouseUp}>
+        <div width={width} height={height} onMouseDown={this.handleMouseDown} onTouchStart={this.handleTouchStart} onMouseMove={this.handleMouseMove} onTouchMove={this.handleTouchMove} onMouseUp={this.handleMouseUp} onTouchEnd={this.handleTouchEnd} onTouchCancel={this.handleMouseEnd} onMouseOut={this.handleMouseUp}>
           <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
         </div>
       </>
