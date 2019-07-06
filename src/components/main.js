@@ -31,14 +31,14 @@ class Main extends React.Component {
         this.setState({colors: newColors});
       });
 
-      fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
+      fetch(`${apiurl}/api/loggedin`,{method:'GET',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
       .then( res => res.json() )
       .then( data => {
         if(data.status && (data.status.includes('Logged in as '))) {
           var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
           this.setState({username:username});
-          this.setState({socket: io(wsloc,{transports:['websocket']}) });
-          fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',credentials:'include'})
+          this.setState({socket: io(`${wsloc}/?token=${localStorage.token}`,{transports:['websocket']}) });
+          fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
           .then( res => res.json() )
           .then( rooms => {
             this.props.setAvailableRooms(rooms)
@@ -74,7 +74,10 @@ class Main extends React.Component {
     this.props.lockLogout();
     this.props.fileLogout();
     this.props.roomLogout();
-    fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'});
+    fetch(`${apiurl}/api/login`, {method:'DELETE',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
+    .then(() => {
+      localStorage.setItem("token","");
+    });
     this.props.history.push("/");
   }
 
