@@ -263,6 +263,7 @@ class MainCanvas extends React.Component {
 
   handleTouchStart = event => {
     event.preventDefault();
+    event.stopPropagation();
     this.handleDown(event.touches[0].pageX,event.touches[0].pageY);
   }
 
@@ -314,6 +315,7 @@ class MainCanvas extends React.Component {
 
   handleTouchEnd = event => {
     event.preventDefault();
+    event.stopPropagation();
     this.lastTouchMoveX = null;
     this.lastTouchMoveY = null;
     this.handleUp();
@@ -633,7 +635,7 @@ class MainCanvas extends React.Component {
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} /> : null }
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: (this.state.overheadView ? "yellow" : "white")}} value="Overhead View" icon={<BorderOuter />} handleSubmit={this.handleOverhead} /> : null }
       </div> 
-        <div width={width} height={height} onMouseDown={this.handleMouseDown} onTouchStart={this.handleTouchStart} onMouseMove={this.handleMouseMove} onTouchMove={this.handleTouchMove} onMouseUp={this.handleMouseUp} onTouchEnd={this.handleTouchEnd} onTouchCancel={this.handleMouseEnd} onMouseOut={this.handleMouseUp}>
+        <div width={width} height={height} onMouseDown={this.handleMouseDown} onTouchStart={this.handleTouchStart} onMouseMove={this.handleMouseMove} onTouchMove={this.handleTouchMove} onMouseUp={this.handleMouseUp} onTouchEnd={this.handleTouchEnd} onTouchCancel={this.handleTouchEnd} onMouseOut={this.handleMouseUp}>
           <canvas id="mc" width={width} height={height}>Your browser doesn't appear to support HTML5 Canvas.</canvas>
         </div>
       </>
