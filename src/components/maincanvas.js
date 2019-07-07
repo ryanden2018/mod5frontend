@@ -175,8 +175,6 @@ class MainCanvas extends React.Component {
   }
 
   handleTouchMove = event => {
-    event.preventDefault();
-    event.stopPropagation();
     let lastTouchMoveX = this.lastTouchMoveX;
     let lastTouchMoveY = this.lastTouchMoveY;
     this.lastTouchMoveX = event.touches[0].pageX;
@@ -263,8 +261,6 @@ class MainCanvas extends React.Component {
   }
 
   handleTouchStart = event => {
-    event.preventDefault();
-    event.stopPropagation();
     this.handleDown(event.touches[0].pageX,event.touches[0].pageY);
   }
 
@@ -315,8 +311,6 @@ class MainCanvas extends React.Component {
   }
 
   handleTouchEnd = event => {
-    event.preventDefault();
-    event.stopPropagation();
     this.lastTouchMoveX = null;
     this.lastTouchMoveY = null;
     this.handleUp();
