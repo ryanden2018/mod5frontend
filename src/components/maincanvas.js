@@ -264,7 +264,7 @@ class MainCanvas extends React.Component {
   }
 
   handleTouchStart = event => {
-    disableBodyScroll(this.canvas);
+    disableBodyScroll(this.canvas.parentElement);
     event.preventDefault();
     event.stopPropagation();
     this.handleDown(event.touches[0].pageX,event.touches[0].pageY);
@@ -319,7 +319,7 @@ class MainCanvas extends React.Component {
   handleTouchEnd = event => {
     event.preventDefault();
     event.stopPropagation();
-    enableBodyScroll(this.canvas);
+    enableBodyScroll(this.canvas.parentElement);
     this.lastTouchMoveX = null;
     this.lastTouchMoveY = null;
     this.handleUp();
