@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import ModeToolbar from './modetoolbar';
 import FileToolbar from './filetoolbar';
 import { Scene, Color, DoubleSide,Mesh,PlaneGeometry,MeshPhongMaterial,Vector2,WebGLRenderer,Raycaster,PCFSoftShadowMap,PerspectiveCamera,PointLight,AmbientLight } from 'three';
+import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
 import FormButton from './formbutton';
 import Furnishing from '../furnishings/furnishing';
 import ThreeSixty from '@material-ui/icons/ThreeSixty';
@@ -18,15 +19,6 @@ import 'promise-polyfill/src/polyfill';
 const width = 800;
 const height = 600;
 
-let scrolling = true;
-
-document.body.addEventListener("touchmove", function(event) {
-  if( !scrolling ) {
-    event.preventDefault();
-    event.stopPropagation();
-    return false;
-  }
-});
 
 function angle(x,y) {
   if(x>0) {
@@ -272,9 +264,9 @@ class MainCanvas extends React.Component {
   }
 
   handleTouchStart = event => {
+    disableBodyScroll(this.canvas);
     event.preventDefault();
     event.stopPropagation();
-    scrolling = false;
     this.handleDown(event.touches[0].pageX,event.touches[0].pageY);
   }
 
@@ -327,7 +319,7 @@ class MainCanvas extends React.Component {
   handleTouchEnd = event => {
     event.preventDefault();
     event.stopPropagation();
-    scrolling = true;
+    enableBodyScroll(this.canvas);
     this.lastTouchMoveX = null;
     this.lastTouchMoveY = null;
     this.handleUp();
@@ -426,6 +418,7 @@ class MainCanvas extends React.Component {
     this.buildSocketEvents();
 
     const canvas = document.querySelector("#mc");
+    this.canvas = canvas;
     this.renderer = new WebGLRenderer({canvas:canvas,physicallyCorrectLights:true});
     this.raycaster = new Raycaster();
     this.renderer.shadowMap.enabled = true;
@@ -475,6 +468,7 @@ class MainCanvas extends React.Component {
 
     clearInterval(this.interval);
     this.interval = null;
+    clearAllBodyScrollLocks();
   }
 
 
