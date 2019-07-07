@@ -14,7 +14,15 @@ export default class App extends React.Component {
   alphanumericFilter = (string, allowSpaces = false) => {
     var match = ( allowSpaces ? /^[a-zA-Z0-9 ]*$/ : /^[a-zA-Z0-9]*$/ );
     if( string && string.toString && string.toString().match(match) ) {
-      return string;
+      return string.toString();
+    } else {
+      return null;
+    }
+  }
+
+  alphanumericReplace = string => {
+    if(string && string.toString) {
+      return string.toString().replace(/[^a-zA-Z0-9]/g,"");
     } else {
       return null;
     }
@@ -26,7 +34,7 @@ export default class App extends React.Component {
         <NavBar />
         <Route exact path="/" render={(props) => <Login {...props} alphanumericFilter={this.alphanumericFilter} />} />
         <Route exact path="/signup" render={(props) => <Signup {...props} alphanumericFilter={this.alphanumericFilter} />} />
-        <Route exact path="/main" render={(props) => <Main {...props} alphanumericFilter={this.alphanumericFilter} />}  />
+        <Route exact path="/main" render={(props) => <Main {...props} alphanumericReplace={this.alphanumericReplace} alphanumericFilter={this.alphanumericFilter} />}  />
         <Route exact path="/manageAccount" render={(props) => <ManageAccount {...props} alphanumericFilter={this.alphanumericFilter}  />} />
       </Router>
     );
