@@ -105,8 +105,8 @@ class MainCanvas extends React.Component {
 
 
   newRoom = (roomName,roomSize) => {
-    let name = this.props.alphanumericFilter(roomName)
-    let size = this.props.alphanumericFilter(roomSize)
+    let name = this.props.alphanumericReplace(roomName)
+    let size = this.props.alphanumericReplace(roomSize)
     if(name && size && size.match(/^\d+$/) && (parseInt(size)>0) && (parseInt(size)<11)) {
       fetch(`${apiurl}/api/rooms`, { method:"POST",
         headers: {"Content-type":"application/json","Authorization":`Bearer ${localStorage.token}`},

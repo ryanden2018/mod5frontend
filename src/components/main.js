@@ -103,7 +103,7 @@ class Main extends React.Component {
         <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" title="Manage Account"><SvgIcon><AccountBox /></SvgIcon></button></form>
       
         
-        { (!!this.state.socket) ? <MainCanvas openHelp={this.openHelp} setErrMsg={this.setErrMsg} alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
+        { (!!this.state.socket) ? <MainCanvas openHelp={this.openHelp} setErrMsg={this.setErrMsg} alphanumericReplace={this.props.alphanumericReplace} alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
       </div>
     </div>
     </> );
