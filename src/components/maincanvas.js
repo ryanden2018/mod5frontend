@@ -18,6 +18,16 @@ import 'promise-polyfill/src/polyfill';
 const width = 800;
 const height = 600;
 
+let scrolling = true;
+
+document.body.addEventListener("touchmove", function(event) {
+  if( !scrolling ) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  }
+});
+
 function angle(x,y) {
   if(x>0) {
     return Math.atan(y/x);
@@ -264,6 +274,7 @@ class MainCanvas extends React.Component {
   handleTouchStart = event => {
     event.preventDefault();
     event.stopPropagation();
+    scrolling = false;
     this.handleDown(event.touches[0].pageX,event.touches[0].pageY);
   }
 
@@ -316,6 +327,7 @@ class MainCanvas extends React.Component {
   handleTouchEnd = event => {
     event.preventDefault();
     event.stopPropagation();
+    scrolling = true;
     this.lastTouchMoveX = null;
     this.lastTouchMoveY = null;
     this.handleUp();
