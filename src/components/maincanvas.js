@@ -187,7 +187,7 @@ class MainCanvas extends React.Component {
   }
 
   handleMove = (pageX,pageY,movementX,movementY) => {
-    if(this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
+    if(this.props.roomProperties && this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
       if(this.props.mode.mode === "move") {
         if(!this.state.overheadView) {
           let a = this.props.roomProperties.width*movementX/width;
@@ -222,7 +222,7 @@ class MainCanvas extends React.Component {
           }
         }
       }
-    } else if ( this.props.lock.mouseDown ) {
+    } else if ( this.props.roomProperties && this.props.lock.mouseDown ) {
       if( (!this.state.rotatingCameraMode) && (!this.state.overheadView) ) {
         let a = -this.props.roomProperties.width*movementX/width;
         let b = -this.props.roomProperties.length*movementY/height;
