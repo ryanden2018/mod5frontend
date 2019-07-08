@@ -93,6 +93,18 @@ class MainCanvas extends React.Component {
         }
       }
     , 1000);
+
+    if(this.props.username === "dummy") {
+      fetch(`${apiurl}/api/users/dummy/rooms`)
+      .then( res => res.json() )
+      .then( rooms => {
+        Object.keys(rooms).forEach( key => {
+          if(room[key].name === "dummy") {
+            this.openRoom(room[key].id);
+          }
+        });
+      });
+    }
   }
 
   componentWillUnmount() {

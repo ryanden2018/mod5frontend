@@ -57,6 +57,7 @@ export default class Login extends React.Component {
           <p style={{color:"red"}}><b>{this.state.err}</b></p>
           <p><button type="submit">Login</button></p>
         </form>
+        <p><b>Dummy account:</b> username "dummy", password "abcdef" (without the quotes)</p>
       </div>
     );
   }
