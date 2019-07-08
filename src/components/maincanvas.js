@@ -161,7 +161,11 @@ const mapDispatchToProps = dispatch => {
     updateColor : (furnishingId,colorName,colors) => dispatch({type:"UPDATE_COLOR",furnishingId:furnishingId,colorName:colorName,colors:colors}),
     setAvailableRooms: rooms => dispatch( {type:"SET_AVAILABLE_ROOMS",rooms:rooms}),
     setRoomProperties: (roomProperties) => dispatch({type:"SET_ROOM_PROPERTIES",roomProperties:roomProperties}),
-    setIsOwner: (val) => dispatch({type:"SET_IS_OWNER",val:val})
+    setIsOwner: (val) => dispatch({type:"SET_IS_OWNER",val:val}),
+    modeLogout : () => dispatch({type:"MODE_LOGOUT"}),
+    lockLogout : () => dispatch({type:"LOCK_LOGOUT"}),
+    fileLogout : () => dispatch({type:"FILE_LOGOUT"}),
+    roomLogout : () => dispatch({type:"ROOM_LOGOUT"})
   };
 };
 

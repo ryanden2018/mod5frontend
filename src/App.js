@@ -20,6 +20,7 @@ export default class App extends React.Component {
     }
   }
 
+  // remove non-alphanumeric characters from string and return result
   alphanumericReplace = string => {
     if(string && string.toString) {
       return string.toString().replace(/[^a-zA-Z0-9]/g,"");
