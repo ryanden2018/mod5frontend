@@ -12,8 +12,8 @@ import CameraAlt from '@material-ui/icons/CameraAlt';
 import Help from '@material-ui/icons/Help';
 import CenterFocusStrong from '@material-ui/icons/CenterFocusStrong';
 import apiurl from './apiurl';
-import 'whatwg-fetch'
-import 'promise-polyfill/src/polyfill';
+//import 'whatwg-fetch'
+//import 'promise-polyfill/src/polyfill';
 
 const width = 800;
 const height = 600;

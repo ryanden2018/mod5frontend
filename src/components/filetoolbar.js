@@ -12,8 +12,8 @@ import Create from '@material-ui/icons/Create';
 import FolderOpen from '@material-ui/icons/FolderOpen';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import apiurl from './apiurl';
-import 'whatwg-fetch'
-import 'promise-polyfill/src/polyfill';
+//import 'whatwg-fetch'
+//import 'promise-polyfill/src/polyfill';
 
 class FileToolbar extends React.Component {
 
