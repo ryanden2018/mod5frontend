@@ -7,8 +7,8 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import AccountBox from '@material-ui/icons/AccountBox';
 import DirectionsWalk from '@material-ui/icons/DirectionsWalk';
 import apiurl from './apiurl';
-import 'whatwg-fetch'
-import 'promise-polyfill/src/polyfill';
+//import 'whatwg-fetch'
+//import 'promise-polyfill/src/polyfill';
 
 const io = require("socket.io-client");
 const wsloc = ( (!window.location.href.includes("localhost")) ? "wss://ryanmod5backend.herokuapp.com" : "ws://localhost:8000" );
