@@ -72,8 +72,8 @@ class Main extends React.Component {
     this.props.lockLogout();
     this.props.fileLogout();
     this.props.roomLogout();
-    fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'});
-    this.props.history.push("/");
+    fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'})
+    .then( () => this.props.history.push("/"));
   }
 
   openHelp = () => {
@@ -98,7 +98,7 @@ class Main extends React.Component {
         <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" title="Manage Account"><SvgIcon><AccountBox /></SvgIcon></button></form>
       
         
-        { (!!this.state.socket) ? <MainCanvas openHelp={this.openHelp} setErrMsg={this.setErrMsg} alphanumericReplace={this.props.alphanumericReplace} alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
+        { (!!this.state.socket) ? <MainCanvas history={this.props.history} openHelp={this.openHelp} setErrMsg={this.setErrMsg} alphanumericReplace={this.props.alphanumericReplace} alphanumericFilter={this.props.alphanumericFilter} username={this.state.username} colors={this.state.colors} socket={this.state.socket} /> : null }
       </div>
     </div>
     </> );

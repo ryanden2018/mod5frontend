@@ -1,3 +1,5 @@
+import apiurl from '../constants/apiurl';
+
 export default function buildSocketEvents() {
   this.props.socket.on('disconnect', () => {
     this.props.setErrMsg( "There is a problem with the connection." );
@@ -7,7 +9,27 @@ export default function buildSocketEvents() {
 
   this.props.socket.on('reconnect',() => {
     this.props.setErrMsg("");
-    this.openRoom(this.state.roomId);
+    this.props.socket.emit("loggedIn");
+    if(this.state.roomId) {
+      this.openRoom(this.state.roomId);
+    }
+  });
+
+  this.props.socket.on('loggedInResponse', msg => {
+    if(msg === "logged in") {
+      if(this.state.roomId) {
+        this.openRoom(this.state.roomId);
+      }
+    } else {
+      this.disposeAllFurnishings(true);
+      this.props.resetEverything();
+      this.props.modeLogout();
+      this.props.lockLogout();
+      this.props.fileLogout();
+      this.props.roomLogout();
+      fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'})
+      .then( () => this.props.history.push("/") );
+    }
   });
 
   this.props.socket.on('roomDeleted',() => {
