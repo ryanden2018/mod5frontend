@@ -34,8 +34,9 @@ class Main extends React.Component {
       .then( data => {
         if(data.status && (data.status.includes('Logged in as '))) {
           var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
-          this.setState({username:username});
-          this.setState({socket: io(`${wsloc}/?token=${localStorage.token}`,{transports:['websocket']}) });
+          this.setState({username:username}, () =>
+            this.setState({socket: io(wsloc,{transports:['websocket']}) })
+          );
           fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',credentials:'include'})
           .then( res => res.json() )
           .then( rooms => {
