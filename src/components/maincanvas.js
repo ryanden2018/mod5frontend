@@ -96,7 +96,7 @@ class MainCanvas extends React.Component {
     , 1000);
 
     if(this.props.username === "dummy") {
-      fetch(`${apiurl}/api/users/dummy/rooms`)
+      fetch(`${apiurl}/api/users/dummy/rooms`,{method:'GET',credentials:'include'})
       .then( res => res.json() )
       .then( rooms => {
         Object.keys(rooms).forEach( key => {
