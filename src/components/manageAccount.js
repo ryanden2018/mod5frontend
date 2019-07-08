@@ -2,16 +2,14 @@ import React from 'react';
 import '../App.css';
 import FormButton from './formbutton';
 import ConfirmModal from './confirmmodal';
-import apiurl from './apiurl';
-//import 'whatwg-fetch'
-//import 'promise-polyfill/src/polyfill';
+import apiurl from '../constants/apiurl';
 
 export default class ManageAccount extends React.Component {
 
   state = { err: "", modal: null,deleteUsername:"" }
 
   componentDidMount() {
-    fetch(`${apiurl}/api/loggedin`,{method:'GET',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
+    fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
     .then( res => res.json() )
     .then( data => {
       if(!data.status.includes("Logged in as ")) {
@@ -36,7 +34,7 @@ export default class ManageAccount extends React.Component {
       this.setState({err: "New passwords must match"});
     } else {
       fetch(`${apiurl}/api/users/${username}/password`,{method:"PATCH",
-        headers: {"Content-type":"application/json","Authorization":`Bearer ${localStorage.token}`},
+        headers: {"Content-type":"application/json"},
         credentials:'include',
         body: JSON.stringify({ currentPassword:oldPassword, newPassword: password })
       }).then(res=>res.json())
@@ -55,11 +53,10 @@ export default class ManageAccount extends React.Component {
     let username = this.props.alphanumericFilter(this.state.deleteUsername);
     if( username )
     {
-      fetch(`${apiurl}/api/users/${username}`,{method:"DELETE",headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
+      fetch(`${apiurl}/api/users/${username}`,{method:"DELETE",credentials:'include'})
       .then( () => 
-        fetch(`${apiurl}/api/login`, {method:'DELETE',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
+        fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'})
         .then( () => {
-          localStorage.setItem("token","");
           this.props.history.push("/") 
         }) 
       );

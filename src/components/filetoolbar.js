@@ -11,9 +11,7 @@ import DeleteForever from '@material-ui/icons/DeleteForever';
 import Create from '@material-ui/icons/Create';
 import FolderOpen from '@material-ui/icons/FolderOpen';
 import PersonAdd from '@material-ui/icons/PersonAdd';
-import apiurl from './apiurl';
-//import 'whatwg-fetch'
-//import 'promise-polyfill/src/polyfill';
+import apiurl from '../constants/apiurl';
 
 class FileToolbar extends React.Component {
 
@@ -31,8 +29,7 @@ class FileToolbar extends React.Component {
     let username = this.props.alphanumericFilter(inputVal);
     if(username) {
       fetch(`${apiurl}/api/UserRooms`, {method:"POST",
-        headers:{"Content-Type":"application/json",
-                "Authorization":`Bearer ${localStorage.token}`},
+        headers:{"Content-Type":"application/json"},
         credentials:'include',
         body: JSON.stringify( {recipientUsername: username, roomId: this.props.alphanumericFilter(this.props.roomProperties.id)} ) } )
       .catch( () => { this.setError("Could not invite user"); } );
@@ -43,7 +40,7 @@ class FileToolbar extends React.Component {
 
   deleteRoom = () => {
     this.setState({modal:null});
-    fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
+    fetch(`${apiurl}/api/rooms/${this.props.alphanumericFilter(this.props.roomProperties.id)}`,{method:'DELETE',credentials:'include'})
     .then( () => { 
       this.props.socket.emit("roomDeleted");
       this.props.resetFile();

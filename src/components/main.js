@@ -6,9 +6,7 @@ import { connect } from 'react-redux';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AccountBox from '@material-ui/icons/AccountBox';
 import DirectionsWalk from '@material-ui/icons/DirectionsWalk';
-import apiurl from './apiurl';
-//import 'whatwg-fetch'
-//import 'promise-polyfill/src/polyfill';
+import apiurl from '../constants/apiurl';
 
 const io = require("socket.io-client");
 const wsloc = ( (!window.location.href.includes("localhost")) ? "wss://ryanmod5backend.herokuapp.com" : "ws://localhost:8000" );
@@ -31,14 +29,14 @@ class Main extends React.Component {
         this.setState({colors: newColors});
       });
 
-      fetch(`${apiurl}/api/loggedin`,{method:'GET',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
+      fetch(`${apiurl}/api/loggedin`,{method:'GET',credentials:'include'})
       .then( res => res.json() )
       .then( data => {
         if(data.status && (data.status.includes('Logged in as '))) {
           var username = this.props.alphanumericFilter(data.status.split(" ")[3]);
           this.setState({username:username});
           this.setState({socket: io(`${wsloc}/?token=${localStorage.token}`,{transports:['websocket']}) });
-          fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
+          fetch(`${apiurl}/api/users/${this.props.alphanumericFilter(username)}/rooms`,{method:'GET',credentials:'include'})
           .then( res => res.json() )
           .then( rooms => {
             this.props.setAvailableRooms(rooms)
@@ -74,10 +72,7 @@ class Main extends React.Component {
     this.props.lockLogout();
     this.props.fileLogout();
     this.props.roomLogout();
-    fetch(`${apiurl}/api/login`, {method:'DELETE',headers:{"Authorization":`Bearer ${localStorage.token}`},credentials:'include'})
-    .then(() => {
-      localStorage.setItem("token","");
-    });
+    fetch(`${apiurl}/api/login`, {method:'DELETE',credentials:'include'});
     this.props.history.push("/");
   }
 

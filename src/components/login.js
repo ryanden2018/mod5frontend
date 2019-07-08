@@ -1,9 +1,7 @@
 import React from 'react';
 import FormButton from './formbutton';
 import '../App.css';
-import apiurl from './apiurl';
-//import 'whatwg-fetch'
-//import 'promise-polyfill/src/polyfill';
+import apiurl from '../constants/apiurl';
 
 export default class Login extends React.Component {
 
@@ -13,8 +11,7 @@ export default class Login extends React.Component {
   componentDidMount() {
     fetch(`${apiurl}/api/loggedin`,{
       method:'GET',
-      credentials:'include',
-      headers:{'Authorization':`Bearer ${localStorage.token}`}
+      credentials:'include'
     })
     .then( res => res.json() )
     .then( data => {
@@ -41,20 +38,7 @@ export default class Login extends React.Component {
     }).then( res => res.json() )
     .then( data => {
       if(data.success) {
-      
-        // check user was actually logged in
-        fetch(`${apiurl}/api/loggedin`,{method:"GET",credentials:'include'})
-        .then(res => res.json())
-        .then(outcome => {
-          if(outcome.status.includes("Logged in as ")) {
-            this.props.history.push("/main");
-          } else {
-            localStorage.setItem("token",data.token);
-            this.props.history.push("/main");
-          }
-        });
-
-        
+        this.props.history.push("/main");
       } else {
         this.setState({err:"Could not log in"});
       }
