@@ -35,6 +35,7 @@ import disposeAllFurnishings from '../helpers/disposeAllFurnishings';
 import handleMoveCamera from '../helpers/handleMoveCamera';
 import handleRotateCamera from '../helpers/handleRotateCamera';
 import handleOverhead from '../helpers/handleOverhead';
+import apiurl from '../constants/apiurl';
 
 
 class MainCanvas extends React.Component {
@@ -99,8 +100,8 @@ class MainCanvas extends React.Component {
       .then( res => res.json() )
       .then( rooms => {
         Object.keys(rooms).forEach( key => {
-          if(room[key].name === "dummy") {
-            this.openRoom(room[key].id);
+          if(rooms[key].name === "dummy") {
+            this.openRoom(rooms[key].id);
           }
         });
       });
