@@ -9,13 +9,10 @@ export default function buildSocketEvents() {
 
   this.props.socket.on('reconnect',() => {
     this.props.setErrMsg("");
-    this.props.socket.emit("loggedIn");
-    if(this.state.roomId) {
-      this.openRoom(this.state.roomId);
-    }
+    this.props.socket.emit("loggedInReconnectEvent");
   });
 
-  this.props.socket.on('loggedInResponse', msg => {
+  this.props.socket.on('loggedInReconnectEventResponse', msg => {
     if(msg === "logged in") {
       if(this.state.roomId) {
         this.openRoom(this.state.roomId);
