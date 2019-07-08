@@ -2,9 +2,7 @@ import React from 'react';
 import '../App.css';
 import FormButton from './formbutton';
 import ConfirmModal from './confirmmodal';
-import apiurl from './apiurl';
-//import 'whatwg-fetch'
-//import 'promise-polyfill/src/polyfill';
+import apiurl from '../constants/apiurl';
 
 export default class ManageAccount extends React.Component {
 

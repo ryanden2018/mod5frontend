@@ -1,9 +1,7 @@
 import React from 'react';
 import '../App.css';
 import FormButton from './formbutton';
-import apiurl from './apiurl';
-//import 'whatwg-fetch'
-//import 'promise-polyfill/src/polyfill';
+import apiurl from '../constants/apiurl';
 
 export default class Signup extends React.Component {
 
