@@ -17,7 +17,7 @@ export default function newRoom(roomName,roomSize) {
         this.props.socket.emit("join",{roomId:data.id});
         this.setState({roomId: data.id});
       } else {
-        this.props.setErrMsg("Could not create room");
+        this.props.setErrMsg("Could not create room (try a different name)");
       }
     })
     .catch( () => this.props.setErrMsg("Could not create room") );
