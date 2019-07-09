@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
-import HelpModal from './helpmodal';
-import MainCanvas from './maincanvas';
+import HelpModal from '../modals/helpmodal';
+import MainCanvas from '../components/maincanvas';
 import { connect } from 'react-redux';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AccountBox from '@material-ui/icons/AccountBox';

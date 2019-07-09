@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
-import Signup from './components/signup';
-import Main from './components/main';
-import Login from './components/login';
+import Signup from './routes/signup';
+import Main from './routes/main';
+import Login from './routes/login';
 import NavBar from './components/navbar';
-import ManageAccount from './components/manageAccount';
+import ManageAccount from './routes/manageAccount';
 
 export default class App extends React.Component {
 

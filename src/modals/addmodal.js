@@ -1,6 +1,6 @@
 import React from 'react';
 import '../App.css';
-import FormButton from './formbutton';
+import FormButton from '../components/formbutton';
 import Modal from './modal';
 
 export default class AddModal extends Modal {

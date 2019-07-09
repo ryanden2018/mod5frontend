@@ -11,6 +11,8 @@ export default function newRoom(roomName,roomSize) {
     ).then( res => res.json() )
     .then( data => {
       if(!data.error) {
+        this.props.clearUndoStack();
+        this.props.clearRedoStack();
         this.props.setIsOwner(true);
         this.props.setRoomProperties(data);
         this.rebuildRoom();

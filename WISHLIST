@@ -6,7 +6,7 @@ Standard
 Graphics
 * Better textures
 * Rounding of edges
-* Better shadows
+* Better shadows - unified 3d meshes
 
 Functionality
 * Wallpaper
@@ -14,7 +14,7 @@ Functionality
 * Physical units (e.g. feet)
 * Separate width from length
 * Different room shapes (e.g. circular, or corner cut off, etc)
-* Add/move light sources, alter softness of light source
+* Add/move light sources, alter softness of light source, light has color
 * More furniture items
 * Additional items (e.g. vases) requiring extra coordinate
 * Stairs, rugs, carpets

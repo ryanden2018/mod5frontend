@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
-import FormButton from './formbutton';
-import ConfirmModal from './confirmmodal';
+import FormButton from '../components/formbutton';
+import ConfirmModal from '../modals/confirmmodal';
 import apiurl from '../constants/apiurl';
 
 export default class ManageAccount extends React.Component {
