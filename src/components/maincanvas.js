@@ -10,6 +10,8 @@ import BorderOuter from '@material-ui/icons/BorderOuter';
 import CameraAlt from '@material-ui/icons/CameraAlt';
 import Help from '@material-ui/icons/Help';
 import CenterFocusStrong from '@material-ui/icons/CenterFocusStrong';
+import Undo from '@material-ui/icons/Undo';
+import Redo from '@material-ui/icons/Redo';
 import openRoom from '../helpers/openRoom';
 import newRoom from '../helpers/newRoom';
 import rebuildRoom from '../helpers/rebuildRoom';
@@ -36,6 +38,11 @@ import handleMoveCamera from '../helpers/handleMoveCamera';
 import handleRotateCamera from '../helpers/handleRotateCamera';
 import handleOverhead from '../helpers/handleOverhead';
 import apiurl from '../constants/apiurl';
+import pushRoomToUndoStack from '../helpers/pushRoomToUndoStack';
+import pushRoomToRedoStack from '../helpers/pushRoomToRedoStack';
+import handleUndo from '../helpers/handleUndo';
+import handleRedo from '../helpers/handleRedo';
+import loadRoomFromState from '../helpers/loadRoomFromState';
 
 
 class MainCanvas extends React.Component {
@@ -71,6 +78,11 @@ class MainCanvas extends React.Component {
   handleMoveCamera = handleMoveCamera.bind(this);
   handleRotateCamera = handleRotateCamera.bind(this);
   handleOverhead = handleOverhead.bind(this);
+  pushRoomToUndoStack = pushRoomToUndoStack.bind(this);
+  pushRoomToRedoStack = pushRoomToRedoStack.bind(this);
+  handleUndo = handleUndo.bind(this);
+  handleRedo = handleRedo.bind(this);
+  loadRoomFromState = loadRoomFromState.bind(this);
 
   componentDidMount() {
     this.buildSocketEvents();
@@ -114,6 +126,8 @@ class MainCanvas extends React.Component {
     this.removeTransients();
     this.tossGarbage();
     this.props.resetEverything();
+    this.props.clearUndoStack();
+    this.props.clearRedoStack();
 
     clearInterval(this.interval);
     this.interval = null;
@@ -126,10 +140,12 @@ class MainCanvas extends React.Component {
 
     return ( 
       <>
-      <FileToolbar newRoom={this.newRoom} openRoom={this.openRoom} disposeAllFurnishings={this.disposeAllFurnishings} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} username={this.props.username} colors={this.props.colors} socket={this.props.socket} />
+      <FileToolbar clearUndoStack={this.props.clearUndoStack} clearRedoStack={this.props.clearRedoStack} newRoom={this.newRoom} openRoom={this.openRoom} disposeAllFurnishings={this.disposeAllFurnishings} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} username={this.props.username} colors={this.props.colors} socket={this.props.socket} />
+      <FormButton value="Undo" icon={<Undo />} handleSubmit={() => this.handleUndo(true)} />
+      <FormButton value="Redo" icon={<Redo />} handleSubmit={() => this.handleRedo(true)} />
       <FormButton value="Help" icon={<Help />} handleSubmit={this.props.openHelp} />
       <div>
-        {(!!this.props.roomProperties) ? <ModeToolbar renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} socket={this.props.socket} colors={this.props.colors} username={this.props.username} /> : null }
+        {(!!this.props.roomProperties) ? <ModeToolbar pushRoomToUndoStack={this.pushRoomToUndoStack} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} socket={this.props.socket} colors={this.props.colors} username={this.props.username} /> : null }
         {(!!this.props.roomProperties) ? <FormButton icon={<CameraAlt />} value="Reset Camera" handleSubmit={this.resetCamera} /> : null }
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode || this.state.overheadView) ? "white" : "yellow")}} icon={<CenterFocusStrong />} value="Move Camera" handleSubmit={this.handleMoveCamera} /> : null }
         {(!!this.props.roomProperties) ? <FormButton style={{backgroundColor: ((this.state.rotatingCameraMode && (!this.state.overheadView)) ? "yellow" : "white")}} icon={<ThreeSixty />} value="Rotate Camera" handleSubmit={this.handleRotateCamera} /> : null }
@@ -148,7 +164,9 @@ const mapStateToProps = state => {
     room: state.room,
     lock: state.lock,
     mode: state.mode,
-    roomProperties: state.file.roomProperties
+    roomProperties: state.file.roomProperties,
+    undo: state.undo,
+    redo: state.redo
   };
 };
 
@@ -178,7 +196,13 @@ const mapDispatchToProps = dispatch => {
     modeLogout : () => dispatch({type:"MODE_LOGOUT"}),
     lockLogout : () => dispatch({type:"LOCK_LOGOUT"}),
     fileLogout : () => dispatch({type:"FILE_LOGOUT"}),
-    roomLogout : () => dispatch({type:"ROOM_LOGOUT"})
+    roomLogout : () => dispatch({type:"ROOM_LOGOUT"}),
+    clearUndoStack : () =>  dispatch({type:"CLEAR_UNDO_STACK"}),
+    clearRedoStack : () => dispatch({type:"CLEAR_REDO_STACK"}),
+    pushToUndoStack : (stateToPush) => dispatch({type:"PUSH_TO_UNDO_STACK",stateToPush:stateToPush}),
+    popUndoStack : () => dispatch({type:"POP_UNDO_STACK"}),
+    pushToRedoStack : (stateToPush) => dispatch({type:"PUSH_TO_REDO_STACK",stateToPush:stateToPush}),
+    popRedoStack : () => dispatch({type:"POP_REDO_STACK"})
   };
 };
 

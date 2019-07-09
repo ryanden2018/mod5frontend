@@ -12,6 +12,8 @@ export default function openRoom(inputVal) {
       .then(res => res.json() )
       .then( furnishings => {
         if(!furnishings.error) {
+          this.props.clearUndoStack();
+          this.props.clearRedoStack();
           this.props.removeAllFurnishings();
           Object.keys(furnishings).forEach(
             key => {

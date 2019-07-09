@@ -7,7 +7,7 @@ import RotateLeft from '@material-ui/icons/RotateLeft';
 import ColorLens from '@material-ui/icons/ColorLens';
 import PanTool from '@material-ui/icons/PanTool';
 import AddCircle from '@material-ui/icons/AddCircle';
-import AddModal from './addmodal';
+import AddModal from '../modals/addmodal';
 
 class ModeToolbar extends React.Component {
   state = { modal : null };
@@ -40,7 +40,7 @@ class ModeToolbar extends React.Component {
       {
         this.state.modal === "add"
         ?
-        <AddModal cancelCallback={() => this.setState({modal:null})} okCallback={name => {this.props.addFurnishing(name,this.props.socket,this.props.colors,this.props.mode.colorName,this.props.renderer(),this.props.camera(),this.props.scene());this.setState({modal:null})}} />
+        <AddModal cancelCallback={() => this.setState({modal:null})} okCallback={name => {this.props.pushRoomToUndoStack();this.props.clearRedoStack();this.props.addFurnishing(name,this.props.socket,this.props.colors,this.props.mode.colorName,this.props.renderer(),this.props.camera(),this.props.scene());this.setState({modal:null})}} />
         :
         null
       }
@@ -75,7 +75,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setMode : mode => dispatch({type:"SET_MODE",mode:mode}),
     setColor: colorName => dispatch({type:"SET_COLOR",colorName:colorName}),
-    addFurnishing: (name,socket,colors,colorName,renderer,camera,scene) => dispatch( {type:"ADD_FURNISHING",name:name,socket:socket,colors:colors,colorName:colorName,renderer:renderer,camera:camera,scene:scene} )
+    addFurnishing: (name,socket,colors,colorName,renderer,camera,scene) => dispatch( {type:"ADD_FURNISHING",name:name,socket:socket,colors:colors,colorName:colorName,renderer:renderer,camera:camera,scene:scene} ),
+    clearRedoStack : () => dispatch({type:"CLEAR_REDO_STACK"})
   };
 };
 

@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import '../App.css';
 import FormButton from './formbutton';
-import NewModal from './newmodal';
-import ErrorModal from './errormodal';
-import OpenModal from './openmodal';
-import InviteModal from './invitemodal';
-import ConfirmModal from './confirmmodal';
+import NewModal from '../modals/newmodal';
+import ErrorModal from '../modals/errormodal';
+import OpenModal from '../modals/openmodal';
+import InviteModal from '../modals/invitemodal';
+import ConfirmModal from '../modals/confirmmodal';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import Create from '@material-ui/icons/Create';
 import FolderOpen from '@material-ui/icons/FolderOpen';
@@ -45,6 +45,8 @@ class FileToolbar extends React.Component {
       this.props.socket.emit("roomDeleted");
       this.props.resetFile();
       this.props.disposeAllFurnishings(true);
+      this.props.clearUndoStack();
+      this.props.clearRedoStack();
     } )
     .catch( () => { this.setError("Error deleting room") } )
   }

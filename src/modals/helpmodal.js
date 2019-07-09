@@ -1,6 +1,6 @@
 import React from 'react';
 import '../App.css';
-import FormButton from './formbutton';
+import FormButton from '../components/formbutton';
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import Modal from './modal';
@@ -20,6 +20,8 @@ import ThreeSixty from '@material-ui/icons/ThreeSixty';
 import BorderOuter from '@material-ui/icons/BorderOuter';
 import CameraAlt from '@material-ui/icons/CameraAlt';
 import CenterFocusStrong from '@material-ui/icons/CenterFocusStrong';
+import Undo from '@material-ui/icons/Undo';
+import Redo from '@material-ui/icons/Redo';
 
 export default class HelpModal extends Modal {
   constructor() {
@@ -44,6 +46,8 @@ the same room simultaneously.
 <li><FolderOpen style={this.iconStyle} />Open a Room</li>
 <li><PersonAdd style={this.iconStyle} /><em>(if owner)</em> Invite a user to collaborate on this room</li>
 <li><DeleteForever style={this.iconStyle} /><em>(if owner)</em> Delete this room <em>permanently</em></li>
+<li><Undo style={this.iconStyle} />Undo the previous action</li>
+<li><Redo style={this.iconStyle} />Redo</li>
 <li><PanTool style={this.iconStyle} /><em>(when selected)</em> Move an item via drag and drop</li>
 <li><RotateLeft style={this.iconStyle} /><em>(when selected)</em> Rotate an item via drag and drop</li>
 <li><AddCircle style={this.iconStyle} /><em>(when selected)</em> Add an item to the room</li>

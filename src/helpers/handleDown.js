@@ -21,10 +21,15 @@ export default function handleDown(pageX,pageY) {
   });
   if(furnishing) {
     if( (this.props.mode.mode === "move") || (this.props.mode.mode === "rotate") ) {
+      this.pushRoomToUndoStack();
+      this.props.socket.emit("pushRoomToUndoStack");
+      this.props.socket.emit("clearRedoStack");
       this.props.socket.emit("lockRequest",{furnishingId:furnishing.id});
       this.props.setLockRequested();
       this.props.setFurnishing(furnishing.id);
     } else if (this.props.mode.mode === "color") {
+      this.pushRoomToUndoStack();
+      this.props.clearRedoStack();
       furnishing.colorName = this.props.mode.colorName;
       furnishing.red = this.props.colors[this.props.mode.colorName].red;
       furnishing.green = this.props.colors[this.props.mode.colorName].green;
@@ -34,6 +39,8 @@ export default function handleDown(pageX,pageY) {
       this.props.socket.emit("updateColor",{furnishingId:furnishing.id,colorName:this.props.mode.colorName});
       this.props.setMode("move");
     } else if (this.props.mode.mode === "delete") {
+      this.pushRoomToUndoStack();
+      this.props.clearRedoStack();
       this.props.socket.emit("deleteFurnishing",{furnishingId:furnishing.id});
       furnishing.removeFrom(this.scene);
       this.props.deleteFurnishing(furnishing.id);
