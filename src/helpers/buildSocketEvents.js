@@ -45,7 +45,6 @@ export default function buildSocketEvents() {
   this.props.socket.on("lockResponse",payload=>{
     if(payload === "approved") {
       this.props.setLockApproved();
-      //this.props.brighten(this.props.lock.furnishingId,this.props.colors);
     } else {
       this.props.unLock();
     }

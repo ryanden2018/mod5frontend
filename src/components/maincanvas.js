@@ -102,7 +102,7 @@ class MainCanvas extends React.Component {
     this.interval = setInterval(
       () => {
         if(this.props.lock.lockObtained) {
-          this.props.socket.emit("lockRefresh");
+          this.props.socket.emit("lockRefresh",{furnishingId:this.props.lock.furnishingId});
         }
       }
     , 1000);
