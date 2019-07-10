@@ -64,7 +64,7 @@ export default class Login extends React.Component {
         This is because the authentication process uses a cookie set from
         a secondary domain (which I control), and Safari usually prohibits such cookies
         for privacy reasons.</p>
-        <p><b>Internet Explorer</b> is not supported; please use Edge, Firefox or Chrome.</p>
+        <p><b>Internet Explorer</b> is not supported; please use the latest version of Edge, Firefox or Chrome.</p>
       </div>
     );
   }
