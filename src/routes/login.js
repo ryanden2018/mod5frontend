@@ -2,10 +2,11 @@ import React from 'react';
 import FormButton from '../components/formbutton';
 import '../App.css';
 import apiurl from '../constants/apiurl';
+import SafariModal from '../modals/safarimodal';
 
 export default class Login extends React.Component {
 
-  state = { err: "" }
+  state = { err: "", modal: null }
 
 
   componentDidMount() {
@@ -48,6 +49,14 @@ export default class Login extends React.Component {
 
   render() {
     return ( 
+      <>
+      {
+        (this.state.modal === "safari")
+        ?
+        <SafariModal okCallback={() => this.setState({modal:null})} />
+        :
+        null
+      }
       <div style={{width:"80%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Sign Up" handleSubmit={() => this.props.history.push("/signup")} />
         <form onSubmit={this.handleSubmit}>
@@ -57,15 +66,10 @@ export default class Login extends React.Component {
           <p><button type="submit">Login</button></p>
         </form>
         <p><b>Dummy account:</b> username "dummy", password "abcdef" (without the quotes).</p>
-        <p><b>Safari users on MacOSX: </b> To use this site, you will need to 
-        select <tt> Preferences </tt> from the <tt> Safari </tt> menu, click on 
-        <tt> Privacy </tt>, and make sure that "Prevent cross-site tracking" is <b>not 
-        selected</b>. Then you will need to restart Safari (<tt>Safari &gt; Quit Safari</tt>).
-        This is because the authentication process uses something called <tt> XMLHttpRequest </tt> to set a cookie from
-        a secondary domain (which I control), and Safari usually prohibits such cookies
-        for privacy reasons.</p>
+        <p><b>Safari users on MacOSX: </b> please click <FormButton value="here" handleSubmit={() => this.setState({modal:"safari"})} /></p>
         <p><b>Internet Explorer</b> is not supported; please use the latest version of Edge, Firefox or Chrome.</p>
       </div>
+      </>
     );
   }
 }
