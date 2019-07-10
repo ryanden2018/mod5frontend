@@ -48,7 +48,7 @@ export default class Login extends React.Component {
 
   render() {
     return ( 
-      <div style={{width:"100%",paddingLeft:"50px",paddingTop:"20px"}}>
+      <div style={{width:"80%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Sign Up" handleSubmit={() => this.props.history.push("/signup")} />
         <form onSubmit={this.handleSubmit}>
           <p>Username: <input type="text" id="username" name="username" value="dummy" /></p>
@@ -58,10 +58,10 @@ export default class Login extends React.Component {
         </form>
         <p><b>Dummy account:</b> username "dummy", password "abcdef" (without the quotes).</p>
         <p><b>Safari users on MacOSX: </b> To use this site, you will need to 
-        select <tt>Preferences</tt> from the <tt>Safari</tt> menu, click on 
-        <tt>Privacy</tt>, and make sure that "Prevent cross-site tracking" is <b>not</b>
-        selected. Then you will need to restart Safari (<tt>Safari &gt; Quit Safari</tt>).
-        This is because the authentication process uses a cookie set from
+        select <tt> Preferences </tt> from the <tt> Safari </tt> menu, click on 
+        <tt> Privacy </tt>, and make sure that "Prevent cross-site tracking" is <b>not 
+        selected</b>. Then you will need to restart Safari (<tt>Safari &gt; Quit Safari</tt>).
+        This is because the authentication process uses something called <tt> XMLHttpRequest </tt> to set a cookie from
         a secondary domain (which I control), and Safari usually prohibits such cookies
         for privacy reasons.</p>
         <p><b>Internet Explorer</b> is not supported; please use the latest version of Edge, Firefox or Chrome.</p>
