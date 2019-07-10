@@ -51,8 +51,8 @@ export default class Login extends React.Component {
       <div style={{width:"80%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Sign Up" handleSubmit={() => this.props.history.push("/signup")} />
         <form onSubmit={this.handleSubmit}>
-          <p>Username: <input type="text" id="username" name="username" value="dummy" /></p>
-          <p>Password: <input type="password" id="password" name="password" value="abcdef" /></p>
+          <p>Username: <input type="text" id="username" name="username" defaultValue="dummy" /></p>
+          <p>Password: <input type="password" id="password" name="password" defaultValue="abcdef" /></p>
           <p style={{color:"red"}}><b>{this.state.err}</b></p>
           <p><button type="submit">Login</button></p>
         </form>
