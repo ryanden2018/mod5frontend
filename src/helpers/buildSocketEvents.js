@@ -45,7 +45,7 @@ export default function buildSocketEvents() {
   this.props.socket.on("lockResponse",payload=>{
     if(payload === "approved") {
       this.props.setLockApproved();
-      this.props.brighten(this.props.lock.furnishingId,this.props.colors);
+      //this.props.brighten(this.props.lock.furnishingId,this.props.colors);
     } else {
       this.props.unLock();
     }
@@ -68,11 +68,11 @@ export default function buildSocketEvents() {
   });
 
   this.props.socket.on("undo",payload=>{
-    this.handleUndo();
+    this.handleUndo(payload.room);
   });
 
   this.props.socket.on("redo",payload=>{
-    this.handleRedo();
+    this.handleRedo(payload.room);
   });
 
   this.props.socket.on("update", payload => {
