@@ -3,7 +3,7 @@ export default function handleUp() {
       this.props.clearRedoStack();
       this.props.socket.emit("lockRelease",{furnishing:
         this.props.room.find( furnishing => furnishing.id === this.props.lock.furnishingId ) });
-      this.props.dim(this.props.lock.furnishingId,this.props.colors);
+      //this.props.dim(this.props.lock.furnishingId,this.props.colors);
       this.props.unLock();
   }
   this.props.unSetMouseDown();

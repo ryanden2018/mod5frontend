@@ -28,23 +28,23 @@ export default function handleDown(pageX,pageY) {
       this.props.setLockRequested();
       this.props.setFurnishing(furnishing.id);
     } else if (this.props.mode.mode === "color") {
-      this.pushRoomToUndoStack();
-      this.props.clearRedoStack();
-      furnishing.colorName = this.props.mode.colorName;
-      furnishing.red = this.props.colors[this.props.mode.colorName].red;
-      furnishing.green = this.props.colors[this.props.mode.colorName].green;
-      furnishing.blue = this.props.colors[this.props.mode.colorName].blue;
-      furnishing.fillColor();
-      this.renderer.render(this.scene,this.camera);
+      // this.pushRoomToUndoStack();
+      // this.props.clearRedoStack();
+      // furnishing.colorName = this.props.mode.colorName;
+      // furnishing.red = this.props.colors[this.props.mode.colorName].red;
+      // furnishing.green = this.props.colors[this.props.mode.colorName].green;
+      // furnishing.blue = this.props.colors[this.props.mode.colorName].blue;
+      // furnishing.fillColor();
+      // this.renderer.render(this.scene,this.camera);
       this.props.socket.emit("updateColor",{furnishingId:furnishing.id,colorName:this.props.mode.colorName});
       this.props.setMode("move");
     } else if (this.props.mode.mode === "delete") {
-      this.pushRoomToUndoStack();
-      this.props.clearRedoStack();
+      // this.pushRoomToUndoStack();
+      // this.props.clearRedoStack();
       this.props.socket.emit("deleteFurnishing",{furnishingId:furnishing.id});
-      furnishing.removeFrom(this.scene);
-      this.props.deleteFurnishing(furnishing.id);
-      this.renderer.render(this.scene,this.camera);
+      // furnishing.removeFrom(this.scene);
+      // this.props.deleteFurnishing(furnishing.id);
+      // this.renderer.render(this.scene,this.camera);
       this.props.setMode("move");
     }
   }

@@ -141,8 +141,8 @@ class MainCanvas extends React.Component {
     return ( 
       <>
       <FileToolbar clearUndoStack={this.props.clearUndoStack} clearRedoStack={this.props.clearRedoStack} newRoom={this.newRoom} openRoom={this.openRoom} disposeAllFurnishings={this.disposeAllFurnishings} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} username={this.props.username} colors={this.props.colors} socket={this.props.socket} />
-      <FormButton value="Undo" icon={<Undo />} handleSubmit={() => this.handleUndo(true)} />
-      <FormButton value="Redo" icon={<Redo />} handleSubmit={() => this.handleRedo(true)} />
+      <FormButton value="Undo" icon={<Undo />} handleSubmit={() => {if(this.props.undo.length > 0){ this.props.socket.emit("undo",{room:this.props.undo[this.props.undo.length-1]} ) } } } />
+      <FormButton value="Redo" icon={<Redo />} handleSubmit={() => {if(this.props.redo.length > 0){ this.props.socket.emit("redo",{room:this.props.redo[this.props.redo.length-1]} ) } } } />
       <FormButton value="Help" icon={<Help />} handleSubmit={this.props.openHelp} />
       <div>
         {(!!this.props.roomProperties) ? <ModeToolbar pushRoomToUndoStack={this.pushRoomToUndoStack} renderer={() => this.renderer} camera={() => this.camera} scene={() => this.scene} alphanumericFilter={this.props.alphanumericFilter} socket={this.props.socket} colors={this.props.colors} username={this.props.username} /> : null }
