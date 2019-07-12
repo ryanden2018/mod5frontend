@@ -49,14 +49,6 @@ export default class Login extends React.Component {
 
   render() {
     return ( 
-      <>
-      {
-        (this.state.modal === "safari")
-        ?
-        <SafariModal okCallback={() => this.setState({modal:null})} />
-        :
-        null
-      }
       <div style={{width:"80%",paddingLeft:"50px",paddingTop:"20px"}}>
         <FormButton value="Sign Up" handleSubmit={() => this.props.history.push("/signup")} />
         <form onSubmit={this.handleSubmit}>
@@ -66,10 +58,7 @@ export default class Login extends React.Component {
           <p><button type="submit">Login</button></p>
         </form>
         <p><b>Dummy account:</b> username "dummy", password "abcdef" (without the quotes).</p>
-        <p><b>Safari users on MacOSX: </b> please click <FormButton value="here" handleSubmit={() => this.setState({modal:"safari"})} /></p>
-        <p><b>Internet Explorer</b> is not supported; please use the latest version of Edge, Firefox or Chrome.</p>
       </div>
-      </>
     );
   }
 }
