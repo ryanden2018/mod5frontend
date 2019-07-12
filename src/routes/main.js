@@ -9,7 +9,7 @@ import DirectionsWalk from '@material-ui/icons/DirectionsWalk';
 import apiurl from '../constants/apiurl';
 
 const io = require("socket.io-client");
-const wsloc = ( (!window.location.href.includes("localhost")) ? "wss://ryanmod5backend.herokuapp.com" : "ws://localhost:8000" );
+const wsloc = ( (!window.location.href.includes("localhost")) ? "wss://spaceplanner3d.herokuapp.com" : "ws://localhost:8000" );
 
 class Main extends React.Component {
 
@@ -94,7 +94,7 @@ class Main extends React.Component {
     <div>
       
       <div style={{width:"100%",paddingLeft:"50px"}}>
-    { this.state.errMsg ? <p style={{color:"red"}}><b>{this.state.errMsg}</b></p> : <p>&nbsp;</p> }
+   <p> <b>{ (this.state.username !== "dummy") ? this.state.username : null }</b> { this.state.errMsg ? <span style={{color:"red"}}><b>{this.state.errMsg}</b></span> : null }</p>
         <form style={{display:"inline"}} onSubmit={this.handleLogout}><button type="submit" title="Logout"><SvgIcon><DirectionsWalk /></SvgIcon></button></form>
         <form style={{display:"inline"}} onSubmit={() => this.props.history.push("/manageAccount")}><button type="submit" title="Manage Account"><SvgIcon><AccountBox /></SvgIcon></button></form>
       

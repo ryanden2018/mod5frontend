@@ -27,6 +27,9 @@ export default function handleDown(pageX,pageY) {
       this.props.socket.emit("lockRequest",{furnishingId:furnishing.id});
       this.props.setLockRequested();
       this.props.setFurnishing(furnishing.id);
+      if(this.props.username === "dummy") {
+        this.props.setLockApproved();
+      }
     } else if (this.props.mode.mode === "color") {
       this.props.socket.emit("updateColor",{furnishingId:furnishing.id,colorName:this.props.mode.colorName});
       this.props.setMode("move");
