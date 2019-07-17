@@ -14,7 +14,7 @@ function angle(x,y) {
 }
 
 export default function handleMove(pageX,pageY,movementX,movementY) {
-  if(this.props.roomProperties && this.props.lock.lockObtained && this.props.lock.furnishingId && this.props.lock.mouseDown) {
+  if(this.props.roomProperties && this.props.lock.furnishingId && this.props.lock.mouseDown) {
     if(this.props.mode.mode === "move") {
       if(!this.state.overheadView) {
         let a = this.props.roomProperties.width*movementX/width;
