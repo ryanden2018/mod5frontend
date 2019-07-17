@@ -77,6 +77,9 @@ export default function buildSocketEvents() {
   this.props.socket.on("update", payload => {
     let furnishing = this.props.room.find( furnishing => furnishing.id === payload.furnishing.id );
     if(furnishing) {
+      if(this.props.lock.furnishingId === furnishing.id) {
+        this.props.unLock();
+      }
       furnishing.updateFromObject(payload.furnishing,this.props.colors);
       this.renderer.render(this.scene,this.camera);
     }
